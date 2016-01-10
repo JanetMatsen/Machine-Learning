@@ -1,0 +1,152 @@
+\section{Math/Stat Review}
+\smallskip \hrule height 2pt \smallskip
+
+\begin{description}
+        \item[Random Variable X] belongs to set $\Omega$  
+        \item[Conditional Probability \emph{is} Probability]  $P({A}|{ B})$ is a probability function for any fixed $B$. Any theorem that holds for probability also holds for conditional probability.   $P({A}|{ B}) = P(A \cap B)/P(B)$
+        \item[Bayes' Rule] - Bayes' Rule unites marginal, joint, and conditional probabilities. We use this as the definition of conditional probability. 
+        		\[P({\bf A}|{\bf B}) = \frac{P({\bf A} \cap {\bf B})}{P({\bf B})} = \frac{P({\bf B}|{\bf A})P({\bf A})}{P({\bf B})}\] 
+		\[P(A = a \mid B) = \frac{P(A=a) P(B \mid A=a)}{\sum\limits_{a'} P(A=a) P(B \mid A=a)} \]   % TA lecture 1/7/2015
+        \item[Law of Total Probability]: $\sum\limits_x P(X=x) = 1$
+        \item[Product Rule]: $P(A,B) = P(A \mid B) \cdot P(B)$  % TA lecture 1/7/2015
+        \item[Sum Rule]: $P(A) = \sum\limits_{x \in \Omega} P(A, B=b)$  % TA lecture 1/7/2015
+\end{description} 
+
+\subsection{Law of Total Probability (LOTP)}  % from cheat sheet: https://github.com/wzchen/probability_cheatsheet/blob/master/probability_cheatsheet.tex
+Let ${ B}_1, { B}_2, { B}_3, ... { B}_n$ be a \emph{partition} of the sample space (i.e., they are disjoint and their union is the entire sample space).
+\begin{align*} 
+    P({ A}) &= P({ A} | { B}_1)P({ B}_1) + P({ A} | { B}_2)P({ B}_2) + \dots + P({ A} | { B}_n)P({ B}_n)\\
+    P({ A}) &= P({ A} \cap { B}_1)+ P({ A} \cap { B}_2)+ \dots + P({ A} \cap { B}_n)
+    \end{align*} 
+    For \textbf{LOTP with extra conditioning}, just add in another event $C$!
+    \begin{align*} 
+    P({ A}| { C}) &= P({ A} | { B}_1, { C})P({ B}_1 | { C}) + \dots +  P({ A} | { B}_n, { C})P({ B}_n | { C})\\
+    P({ A}| { C}) &= P({ A} \cap { B}_1 | { C})+ P({ A} \cap { B}_2 | { C})+ \dots +  P({ A} \cap { B}_n | { C})
+\end{align*} 
+
+Special case of LOTP with ${ B}$ and ${ B^c}$ as partition:
+   \begin{align*} 
+P({ A}) &= P({ A} | { B})P({ B}) + P({ A} | { B^c})P({ B^c}) \\
+P({ A}) &= P({ A} \cap { B})+ P({ A} \cap { B^c}) \\
+   \end{align*} 
+   
+\subsection{Bayes' Rule}  % from cheat sheet: https://github.com/wzchen/probability_cheatsheet/blob/master/probability_cheatsheet.tex
+
+\textbf{Bayes' Rule, and with extra conditioning (just add in $C$!)}
+         \[P({ A}|{ B})  = \frac{P({ B}|{ A})P({ A})}{P({ B})}\]
+         \[P({ A}|{ B}, { C}) = \frac{P({ B}|{ A}, { C})P({ A} | { C})}{P({ B} | { C})}\]
+         We can also write
+         $$P(A|B,C) = \frac{P(A,B,C)}{P(B,C)} = \frac{P(B,C|A)P(A)}{P(B,C)}$$
+\textbf{Odds Form of Bayes' Rule}
+\[\frac{P({ A}| { B})}{P({ A^c}| { B})} = \frac{P({ B}|{ A})}{P({ B}| { A^c})}\frac{P({ A})}{P({ A^c})}\]
+The \emph{posterior odds} of $A$ are the \emph{likelihood ratio} times the \emph{prior odds}. 
+\hfill \\ \hfill \\
+
+Practice:  What is $P(disease \mid + test)$ if P(disease) = 0.01, \hfill \\  % TA lecture 1/7/2015
+  P(+ $\mid$ disease) = 0.99, P(+ $\mid$ no disease) = 0.01? 
+% ANS: P(disease | +) = P(-d)*P(+ | d) / (P(-d)*P(+|-d) + P(d)*P(+ | -d)
+
+\subsection{Expectation}  % TA lecture 1/7/2015
+\begin{description}
+        \item[f(X)] probability distribution function of X  % TA lecture 1/7/2015
+        \item[X $\sim$ P]: X is distributed according to P.   % TA lecture 1/7/2015
+        \item[Expected value of f under P]: $E_{P}[f(x)] = \sum\limits_{x} p(x)f(x)$
+\end{description} 
+
+E.g. unbiased coin.  x = {1, 2, 3, 4, 5, 6}.  p(X=x) = 1/6 for all x.  \hfill \\
+E(X) = $\sum\limits_{x} p(x) \cdot x = (1/6) \cdot [1 + 2 + 3 + 4 + 5 + 6] = 3.5$
+
+\subsection{Entropy}
+$X \sim P$, $x \in \Omega$  \hfill \\
+
+\hfill \\
+First define \textbf{Surprise}: $S(x) = -\log_2 p(x)$   \hfill \\
+$S(X = \mbox{heads}) = -\log_2 (1/2) = 1 $.     \hfill \\
+\begin{description}  % http://www.cs.cmu.edu/~venkatg/teaching/ITCS-spr2013/notes/15359-2009-lecture25.pdf
+        \item[Axiom 1]: S(1) = 0. (If an event with probability 1 occurs, it is not surprising at all.)  
+        \item[Axiom 2]: S(q) $>$ S(p) if q $<$ p. (When more unlikely outcomes occur, it is more surprising.)  
+        \item[Axiom 3]: S(p) is a continuous function of p. (If an outcomeÕs probability changes by a tiny
+amount, the corresponding surprise should not change by a big amount.)
+	\item[Axiom 4]: S(pq) = S(p) $+$ S(q). (Surprise is additive for independent outcomes.)
+\end{description}
+Surprise of 7 = pretty surprised.  Probability of $1/2^7$ of happening
+\hfill \\ 
+
+(Shannon) \textbf{Entropy}:   
+% http://www.cs.cmu.edu/~venkatg/teaching/ITCS-spr2013/notes/15359-2009-lecture25.pdf
+\begin{align*}
+	H[X] &= - \sum\limits_x p(x) \cdot \log_2 p(x) \\
+		&= - \sum\limits_x p(x) S(x)  \\
+		&= E[S(x)]  
+\end{align*}
+The entropy is the expectation of the surprise.  Throw out x for $p(x)=0$ because log(0) is $\infty$. \hfill \\
+\hfill \\
+\underline{Entropy of an unbiased coin flip:} \hfill \\
+X is a coin flip. $P(X=\mbox{heads}) = 1/2$, $P(X=\mbox{tails}) = 1/2$  \hfill \\
+Note: $\log_2(1/2) = -1$, $- \log_2(1/2) = \log_2(2) = 1$   \hfill \\
+$H[X] = -[1/2 \log_2(1/2) + 1/2 \log_2(1/2)] = 1$   \hfill \\
+\hfill \\
+\underline{Entropy of a coin that always flips to heads:} \hfill \\
+$P(X=\mbox{heads}) = 1$, $P(X=\mbox{tails}) = 0$  \hfill \\
+Note: $\log_x(0) = 0$   \hfill \\
+$H[X] = -[1 \log_2(1) + 0] = 0$   \hfill \\
+No surprise: you are sure what you are going to get.  \hfill \\
+ \hfill \\
+
+Binary entropy plot. 
+\begin{minipage}{\linewidth}
+\begin{center}
+\includegraphics[width=1.3in]{figures/Binary_entropy_plot.pdf}
+\end{center}
+\end{minipage}
+
+\underline{Canonical example:} \hfill \\  % TA lecture 1/7/2015. 
+\begin{tabular}{ l | r }
+  X & Y \\ \hline
+  0 & 1 \\
+  1 & 0 \\
+  1 & 1 \\
+\end{tabular}
+\hfill \\
+If you want to estimate entropy of X, you can use P(X=0).  \hfill \\
+\begin{align*}
+	H[X] &= -[\frac{1}{3} \log_2 \frac{1}{3} + \frac{2}{3} \log_2 \frac{2}{3}] \\
+		& = \frac{1}{3} \log_2 3 + \frac{2}{3} \log_2 3 - \frac{2}{3} \log_2 2 \\
+		&= \log_2 3 - \frac{2}{3} \approx 0.91
+\end{align*}
+This time H[X] = H[Y] because of symmetry. 
+
+\subsection{Conditional Entropy}
+If you don't know x:  (this is kind of an average).  \hfill \\
+$H[Y \mid X=x] = -\sum\limits_y P(Y=y \mid X=x) \cdot \log_2 P(y \mid X=x)$   \hfill \\
+ $H[Y \mid X=x] =  E[S(Y \mid X=x)]  $  \hfill \\
+Note that we are summing over y because we are specifying x. \hfill \\
+\hfill \\
+
+For a particular value of X:  \hfill \\
+$H[Y \mid X] = \sum\limits_x p(x) H[Y \mid X=x]$  \hfill \\
+\hfill \\
+
+Back to table above: 
+\begin{align*}
+	H[Y \mid X=0] &= ?  \\
+	& \mbox{look only at X=0 in table.}  \\
+	&= -[0 + 1 \log_2]  \\
+\end{align*}
+Now that you know X=0, entropy goes to 0.   \hfill \\  \hfill \\
+
+$H[Y \mid X=1] = 1$: You know \textit{less} if you know X=1. \hfill \\ \hfill \\
+
+Now use 
+$H[Y \mid X] = \frac{1}{3}(0) + \frac{2}{3}(1) = 2/3$ \hfill \\
+Given X, you know more.  Average our the more certain case and the less certain case.  \hfill \\  \hfill \\
+
+Note:  $H[Y \mid X] \leq H[Y]$: knowing something can't make you know less. 
+
+
+
+
+
+
+
+
