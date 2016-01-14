@@ -10,7 +10,14 @@
         \item[Law of Total Probability]: $\sum\limits_x P(X=x) = 1$
         \item[Product Rule]: $P(A,B) = P(A \mid B) \cdot P(B)$  % TA lecture 1/7/2015
         \item[Sum Rule]: $P(A) = \sum\limits_{x \in \Omega} P(A, B=b)$  % TA lecture 1/7/2015
-\end{description} 
+\end{description}
+
+Vocab:
+\begin{itemize}
+	\item \textbf{likelihood function} $L(\theta | O)$ is called as the likelihood function. $\theta$ = unknown parameters, $O$ is the observed outcomes.  The likelihood function is conditioned on the observed $O$ and that it is a function of the unknown parameters $\theta$.  Not a probability density function.
+	\item \textbf{"likelihood" vs "probability"}: if discrete, $L(\theta | O)= P(O | \theta)$.  If continuous, $P(O|\theta)=0$ so instead we estimate $\theta$ given $O$ by maximizing $L(\theta | O)= f(O | \theta)$ where $f$ is the pdf associated with the outcomes $O$. 
+		% http://stats.stackexchange.com/questions/2641/what-is-the-difference-between-likelihood-and-probability
+\end{itemize} 
 
 \subsection{Law of Total Probability (LOTP)}  % from cheat sheet: https://github.com/wzchen/probability_cheatsheet/blob/master/probability_cheatsheet.tex
 Let ${ B}_1, { B}_2, { B}_3, ... { B}_n$ be a \emph{partition} of the sample space (i.e., they are disjoint and their union is the entire sample space).
@@ -143,9 +150,30 @@ Given X, you know more.  Average our the more certain case and the less certain 
 
 Note:  $H[Y \mid X] \leq H[Y]$: knowing something can't make you know less. 
 
+\subsection{Entropy and Information Gain}
+\textbf{Information Gain} -  $IG(X) = H(Y) - H(Y \mid X)$ \hfill \\
+Y is the node on top.  X are the nodes below.  He might have used lower case.  \hfill \\
+\textbf{Conditional Information Gain}: $H(y|x) = -sum P(y|x) log_2$   \hfill \\
+  \hfill \\
 
+\begin{itemize}
+	\item Low uncertainty $\leftrightarrow$ Low entropy.
+	\item Lowering entropy $\leftrightarrow$ More information gain. 
+\end{itemize}
 
+The discrete distribution with maximum entropy is the uniform distribution.  For K values of X, $H(X) = \log_2 K$ \hfill \\  % book pg 57
+Conversely, the distribution with minimum entropy (which is zero) is any delta-function that puts all its mass on one state. Such a distribution has no uncertainty. 
+\hfill \\
 
+\underline{Binary Entropy Function}:  $p(X = 1) = \theta$ and $p(X = 0) = 1 - \theta$
+\begin{align*}
+	H(X) &= - [p(X=1) \log_2 p(X=1)+p(X=0) \log_2 p(X=0)]  \\
+		& = - [\theta \log_2 \theta+(1 - \theta) \log_2(1 - \theta)]
+\end{align*}
+
+\subsection{Bits}
+If you use log base 2 for entropy, the resulting units are called bits (short for binary digits). \hfill \\ % book pg 57
+How many things can you encode in 15 bits? $2^{25}$.  \hfill \\  % 1/11/2015 Lecture
 
 
 

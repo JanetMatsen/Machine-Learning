@@ -1,4 +1,5 @@
 \documentclass[10pt,landscape]{article}
+
 \usepackage{multicol}
 \usepackage{calc}
 \usepackage{ifthen}
@@ -20,10 +21,10 @@
 \setlist[description]{leftmargin=0pt}
 \usepackage{xfrac}
 \usepackage[pdftex,
-            pdfauthor={William Chen},
-            pdftitle={Probability Cheatsheet},
-            pdfsubject={A cheatsheet pdf and reference guide originally made for Stat 110, Harvard's Introduction to Probability course. Formulas and equations for your statistics class.},
-            pdfkeywords={probability} {statistics} {cheatsheet} {pdf} {cheat} {sheet} {formulas} {equations}
+            pdfauthor={Janet Matsen},
+            pdftitle={Machine Learning Cheatsheet},
+            pdfsubject={Notes from UW CSE 446 Winter 2016},
+            pdfkeywords={machine learning} {statistics} {cheatsheet} {pdf} {cheat} {sheet} {formulas} {equations}
             ]{hyperref}
 \usepackage{relsize}
 \usepackage{rotating}
@@ -32,6 +33,11 @@
     \def\independenT#1#2{\mathrel{\setbox0\hbox{$#1#2$}%
     \copy0\kern-\wd0\mkern4mu\box0}} 
             
+% Janet defined
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% Probably from Stat cheatsheet:            
 \newcommand{\noin}{\noindent}    
 \newcommand{\logit}{\textrm{logit}} 
 \newcommand{\var}{\textrm{Var}}
@@ -137,16 +143,12 @@ Licensed under \texttt{\href{http://creativecommons.org/licenses/by-nc-sa/4.0/}{
      \hfill \\  
 \smallskip \hrule height 2pt \smallskip
 
+\input{./tex/essential_ideas.tex}
+
 \input{./tex/math_stat_review.tex}
 
 \input{./tex/decision_trees.tex}
 
-
-\section{Vocab}
-\smallskip \hrule height 2pt \smallskip
-\begin{itemize}
-	\item decision tree
-\end{itemize}
 
 Let's do this thing. 
 

@@ -1,3 +1,101 @@
 \section{Decison Trees}
 \smallskip \hrule height 2pt \smallskip
 
+Summary:  \hfill \\
+\begin{itemize}
+	\item One of the most popular ML tools.  Easy to understand, implement, and use.  Computationally cheap (to solve heurisRcally). 
+	\item Uses informaton gain to select attributes (ID3, C4.5,…) 
+	\item Presented for classification, but can be used for regression and density estimation too 
+	\item Decision trees will overfit!!! 
+	\item Must use tricks to find “simple trees”, e.g.,  (a) Fixed depth/Early stopping, (b) Pruning, (c) Hypothesis testing
+	\item Tree-based methods partition the feature space into a set of rectangles.  % Elem of Stat. Learning pg 305
+	\item  Interpretability is a key advantage of the recursive binary tree.
+\end{itemize}
+
+Pros: 
+\begin{itemize}
+	\item easy to explain to people
+	\item more closely mirror human decision-making than do the regression and classification approaches
+	\item can be displayed graphically, and are easily interpreted even by a non-expert
+	\item can easily handle qualitative predictors without the need to create dummy variables
+\end{itemize} 
+
+Cons: 
+\begin{itemize}
+	\item  trees generally do not have the same level of predictive accuracy as some of the other regression and classification approaches
+	\item can be very non-robust. A small change in the data can cause a large change in the final estimated tree
+\end{itemize} 
+
+Vocab:
+\begin{itemize}
+	\item \textbf{classification tree} - used to predict a qualitative response rather than a quantitative one %ISL pg 311
+	\item \textbf{regression tree} - predicts a quantitative (continuous) variable. 
+	\item \textbf{depth of tree} -the maximum number of queries that can happen before a leaf is reached and a result obtained %wikipedia
+	\item \textbf{split} - 
+	\item \textbf{node} - synonymous with split.  A place where you split the data. 
+	\item \textbf{node purity} - 
+	\item \textbf{univariate split} -  A split is called univariate if it uses only a single variable, otherwise multivariate.
+	\item \textbf{multivariate decision tree} - can split on things like A + B or Petal.Width / Petal.Length < 1.  If the multivariate split is a conjunction of univariate splits (e.g. A and B), you probably want to put that in the tree structure instead. % http://www.ismll.uni-hildesheim.de/lehre/ml-07w/skript/ml-2up-04-decisiontrees.pdf
+	\item \textbf{univariate decision tree} - a tree with all univariate splits/nodes.  E.g. only split on one attribute at a time. 
+		% http://www.ismll.uni-hildesheim.de/lehre/ml-07w/skript/ml-2up-04-decisiontrees.pdf
+	\item \textbf{binary decision tree} 
+	\item \textbf{argmax} - the input that leads to the maximum output
+	\item \textbf{greedy} - at each step of the tree-building process, the best split is made at that particular step, rather than looking ahead and picking a split that will lead to a better tree in some future step. % An Introduction to Statistical Learning.pdf pdf pg 320
+	\item \textbf{threshold splits} -   % lec http://courses.cs.washington.edu/courses/cse446/16wi/Slides/2_DecisionTrees_Part2.pdf
+\end{itemize}
+
+
+
+Protocol:
+\begin{enumerate}
+	\item Start from empty decision	tree
+	\item Split on next best attribute (feature).   
+		\begin{itemize}
+			\item Use something like information gain to select next attribute. $\displaystyle \argmax_i IG(X_i) = \argmax_i H(Y) - H(Y | X_i) $ %\( \displaystyle \argmin_x \)
+		\end{itemize}	
+	\item Recurse
+\end{enumerate}
+
+When do we stop decision trees?
+\begin{itemize}
+	\item Don’t split a node if all matching records have the same output value
+	\item Only split if all of your bins will have data in them.  His words: "none of the attributes can create multiple nonempty  children." He also said "no attributes can distinguish", and showed that for the remaining training data, each category only had data for one label.  And third, "If all records have exactly the  same set of input attributes then don’t recurse"
+\end{itemize}
+He noted that you might not want to stop splitting just because all of your information nodes have zero information gain. 
+You would miss out on things like XOR.  %http://courses.cs.washington.edu/courses/cse446/16wi/Slides/2_DecisionTrees_Part2.pdf
+
+Decision trees will overfit.  If your labels have no noise, the training set error is always zero. 
+To prevent overfitting, we must introduce some bias towards simpler trees.
+Methods available: 
+\begin{itemize}
+	\item Many strategies for picking simpler trees 
+	\item Fixed depth 
+	\item Fixed number of leaves 
+	\item Or something smarter… 
+\end{itemize}
+
+One definition of \underline{overfitting}:  If your data is generated from a distribution $D(X,Y)$ and you have a hypothesis space $H$: \hfill \\
+Define errors for hypothesis $h \in H$: training error = $error_{train}(h)$,  Data (true) error = $error_D(h)$.  
+The hypothesis $h$ overfits the training data if there exists an $h'$ such that $error_{train}(h) < error_{train}(h')$ and $error_{D}(h) > error_{train}(D)$.
+In plain english, if there is an alternative hypothesis that gives you more error on the training data but less error in the test data then you have overfit your data.  
+\hfill \\ \hfill \\
+
+\underline{How to Build Small Trees}  \hfill \\
+Two reasonable approaches: 
+\begin{itemize}
+	\item Optimize on the held-out (development) set.  If growing the tree larger hurts performance, then stop growing.  But this requires a larger amount of data
+	\item Use statistical significance testing.  Test if the improvement for any split it likely due to noise.  If so, don’t do the split.  Chi Square test w/ MaxPchance = something like 0.05. 
+\end{itemize}
+
+\underline{Pruning Trees}  \hfill \\
+Start at the bottom, not the top.  The top is most likely to have your best splits.  
+In this way, you only cut high branches if all the branches below were cut. 
+
+\underline{Classification vs. Regression Trees}  \hfill \\
+In class we mostly discussed nodes with categorical attributes.  
+You can have continuous attributes (see HW1).  
+You can also have either discrete or continuous output.  
+When output is discrete, you can chose your splits based on entropy.
+If it is continuous, you need to do something more like least squares.  
+For regression trees, see pg 306 from \href{http://www-bcf.usc.edu/~gareth/ISL/}{ISL} or pg 307 of \href{http://web.stanford.edu/~hastie/local.ftp/Springer/OLD/ESLII_print4.pdf}{ESLII}.
+
