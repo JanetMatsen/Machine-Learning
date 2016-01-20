@@ -1,0 +1,38 @@
+\section{Bayesian Learning}
+\smallskip \hrule height 2pt \smallskip
+
+Rather than estimating a single $\theta$, we obtain a  distribution over possible values of $\theta$.
+
+For small sample size, prior is important! 
+
+Use Bayes' Rule:
+$ \displaystyle P(\theta | D) = \frac{P(D | \theta) P(\theta)}{P(D)}$
+\begin{itemize}
+	\item \textbf{Posterior}: $P(\theta | D)$
+	\item \textbf{Data Likelihood}: $P(D | \theta) $
+	\item \textbf{Prior}: $P(\theta)$
+	\item \textbf{normalization}: $P(D)$
+\end{itemize}
+Or equivalently, $P(\theta | D) \propto P(D | \theta) P(\theta)$
+
+If you have a uniform prior, you just do MLE.  \hfill \\
+$P(\theta) \propto 1 \rightarrow P(\theta | D) \propto P(D | \theta)$
+
+\underline{Vocab}
+\begin{itemize}
+	\item \textbf{prior}: 
+	\item \textbf{prior distribution}: 
+	\item \textbf{posterior}: 
+	\item \textbf{posterior distribution}: 
+	\item \textbf{MAP}:
+\end{itemize}
+
+\hfill \\
+\underline{Thumbtack Problem}
+\begin{itemize}
+	\item use Binomial likelihood:  $P(D | \theta) = \theta^{\alpha_H} (1-\theta)^{\alpha_T}$
+	\item To get a simple posterior form, use a conjugate prior.  Conjugate prior of Binomial is the Beta Distribution.  See \href{http://courses.cs.washington.edu/courses/cse446/16wi/Slides/3_PointEstimation.pdf}{slides} for math. 
+	\item The Beta prior is equivalent to extra thumbtack flips.  As $N \rightarrow \infty$, the prior is “forgotten”.  But for small sample size, prior is important.  
+\end{itemize}
+
+If you are measuring a continuous variable, Gaussians are your friend. 

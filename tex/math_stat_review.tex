@@ -10,6 +10,7 @@
         \item[Law of Total Probability]: $\sum\limits_x P(X=x) = 1$
         \item[Product Rule]: $P(A,B) = P(A \mid B) \cdot P(B)$  % TA lecture 1/7/2015
         \item[Sum Rule]: $P(A) = \sum\limits_{x \in \Omega} P(A, B=b)$  % TA lecture 1/7/2015
+        \item[i.i.d]: $D=\{x_i | i=1 \dots n\}, P(D | \theta) = \prod_i P(x_i \mid \theta)$
 \end{description}
 
 Vocab:
@@ -17,6 +18,7 @@ Vocab:
 	\item \textbf{likelihood function} $L(\theta | O)$ is called as the likelihood function. $\theta$ = unknown parameters, $O$ is the observed outcomes.  The likelihood function is conditioned on the observed $O$ and that it is a function of the unknown parameters $\theta$.  Not a probability density function.
 	\item \textbf{"likelihood" vs "probability"}: if discrete, $L(\theta | O)= P(O | \theta)$.  If continuous, $P(O|\theta)=0$ so instead we estimate $\theta$ given $O$ by maximizing $L(\theta | O)= f(O | \theta)$ where $f$ is the pdf associated with the outcomes $O$. 
 		% http://stats.stackexchange.com/questions/2641/what-is-the-difference-between-likelihood-and-probability
+	\item \textbf{hypothesis space}
 \end{itemize} 
 
 \subsection{Law of Total Probability (LOTP)}  % from cheat sheet: https://github.com/wzchen/probability_cheatsheet/blob/master/probability_cheatsheet.tex
@@ -64,6 +66,10 @@ E.g. unbiased coin.  x = {1, 2, 3, 4, 5, 6}.  p(X=x) = 1/6 for all x.  \hfill \\
 E(X) = $\sum\limits_{x} p(x) \cdot x = (1/6) \cdot [1 + 2 + 3 + 4 + 5 + 6] = 3.5$
 
 \subsection{Entropy}
+Always greater than  or equal to 0.  Zero when outcome is certain.  1 for uniform distribution. \hfill \\
+Entropy is based on a pdf, not a list of labels. E.g.  \hfill \\
+H[1,1,0] $\rightarrow$ H[2/2, 1/3]. 
+
 $X \sim P$, $x \in \Omega$  \hfill \\
 
 \hfill \\
@@ -88,6 +94,13 @@ Surprise of 7 = pretty surprised.  Probability of $1/2^7$ of happening
 \end{align*}
 The entropy is the expectation of the surprise.  Throw out x for $p(x)=0$ because log(0) is $\infty$. \hfill \\
 \hfill \\
+\underline{Binary Entropy Function}:  $p(X = 1) = \theta$ and $p(X = 0) = 1 - \theta$
+\begin{align*}
+	H(X) &= - [p(X=1) \log_2 p(X=1)+p(X=0) \log_2 p(X=0)]  \\
+		& = - [\theta \log_2 \theta+(1 - \theta) \log_2(1 - \theta)]
+\end{align*}
+\hfill \\
+
 \underline{Entropy of an unbiased coin flip:} \hfill \\
 X is a coin flip. $P(X=\mbox{heads}) = 1/2$, $P(X=\mbox{tails}) = 1/2$  \hfill \\
 Note: $\log_2(1/2) = -1$, $- \log_2(1/2) = \log_2(2) = 1$   \hfill \\
@@ -121,7 +134,11 @@ If you want to estimate entropy of X, you can use P(X=0).  \hfill \\
 		& = \frac{1}{3} \log_2 3 + \frac{2}{3} \log_2 3 - \frac{2}{3} \log_2 2 \\
 		&= \log_2 3 - \frac{2}{3} \approx 0.91
 \end{align*}
-This time H[X] = H[Y] because of symmetry. 
+This time H[X] = H[Y] because of symmetry.  \hfill \\
+
+The discrete distribution with maximum entropy is the uniform distribution.  For K values of X, $H(X) = \log_2 K$ \hfill \\  % book pg 57
+Conversely, the distribution with minimum entropy (which is zero) is any delta-function that puts all its mass on one state. Such a distribution has no uncertainty. 
+\hfill \\
 
 \subsection{Conditional Entropy}
 If you don't know x:  (this is kind of an average).  \hfill \\
@@ -153,7 +170,24 @@ Note:  $H[Y \mid X] \leq H[Y]$: knowing something can't make you know less.
 \subsection{Entropy and Information Gain}
 \textbf{Information Gain} -  $IG(X) = H(Y) - H(Y \mid X)$ \hfill \\
 Y is the node on top.  X are the nodes below.  He might have used lower case.  \hfill \\
-\textbf{Conditional Information Gain}: $H(y|x) = -sum P(y|x) log_2$   \hfill \\
+\textbf{Class Example}: If $X_1$ is a node for a split, and you want to know the information gain for that node, you:
+\begin{itemize}
+	\item calculate entropy of the split.  Find Entropy of each branch of the split, and the fraction of points that were channeled to each split.  E.g. %http://courses.cs.washington.edu/courses/cse446/16wi/Slides/2_DecisionTrees_Part2.pdf
+	\begin{align*}
+		\{T, T, T, T, T, F\} & \rightarrow \{T, T, T, T\} \mbox{ (for } X_1=T), \{T, F\} \mbox{ (for } X_1=F) \\
+				& \rightarrow P(X_1 = T) = 4/6, P(X_1=F) = 2/6 \\
+				& \rightarrow H(X_1 = T) =  (1*\log_2 1 + 0*\log_2 0) = 0 \\
+				& \rightarrow H(X_1 = F) =  \frac{2}{6} (\frac{1}{2} \log_2 \frac{1}{2} + \frac{1}{2} \log_2 \frac{1}{2})  \\
+				& = 1 \mbox{ (uniform distribution)} \\
+				H(Y|X_1)  =  - \frac{4}{6} & (1*\log_2 1 + 0*\log_2 0) - \frac{2}{6} (\frac{1}{2} \log_2 \frac{1}{2} + \frac{1}{2} \log_2 \frac{1}{2}) \\
+							& = 2/6
+	\end{align*}
+	\item find the entropy of the unsplit data:  $\{T, T, T, T, T, F\} \rightarrow -(5/6) \log_2(5/6) - (1/6) \log_2(1/6) = 0.65$  % check w/ google: -(5/6)*log_2(5/6) - (1/6)*log_2(1/6) == 0.65. 
+	\item subtract the weighted average of the split entropies from the original: $IG(X_1) = H(Y) - H(Y|X_1) = 0.65 - 0.33$
+\end{itemize}
+
+
+%\textbf{Conditional Information Gain}:    \hfill \\ %$H(y|x) = -\sum P(y|x) log_2$ 
   \hfill \\
 
 \begin{itemize}
@@ -161,15 +195,8 @@ Y is the node on top.  X are the nodes below.  He might have used lower case.  \
 	\item Lowering entropy $\leftrightarrow$ More information gain. 
 \end{itemize}
 
-The discrete distribution with maximum entropy is the uniform distribution.  For K values of X, $H(X) = \log_2 K$ \hfill \\  % book pg 57
-Conversely, the distribution with minimum entropy (which is zero) is any delta-function that puts all its mass on one state. Such a distribution has no uncertainty. 
-\hfill \\
 
-\underline{Binary Entropy Function}:  $p(X = 1) = \theta$ and $p(X = 0) = 1 - \theta$
-\begin{align*}
-	H(X) &= - [p(X=1) \log_2 p(X=1)+p(X=0) \log_2 p(X=0)]  \\
-		& = - [\theta \log_2 \theta+(1 - \theta) \log_2(1 - \theta)]
-\end{align*}
+
 
 \subsection{Bits}
 If you use log base 2 for entropy, the resulting units are called bits (short for binary digits). \hfill \\ % book pg 57

@@ -1,0 +1,39 @@
+\section{Likelihood}
+\smallskip \hrule height 2pt \smallskip
+
+\underline{Vocab}
+\begin{itemize}
+	\item\textbf{likelihood}: the probability of the data given a parameter.  E.g. $P(D | \theta)$ (for discrete like Binomial).  
+	\item \textbf{MLE}: Maximum Likelihood Estimation. 
+	\item \textbf{PAC}: Probability Approximately Correct. 
+\end{itemize}
+
+\underline{ML}: Maximum Likelihood \hfill \\
+ \hfill \\
+ 
+\underline{MLE}: Maximum Likelihood Estimation \hfill \\
+Choose $\theta$ to maximize probability of D. \hfill \\
+Set derivative of \_\_ to zero and solve.  If function is multivariate, set each partial derivative to zero and solve. \hfill \\
+$\hat{\theta} = \argmax_\theta P(D | \theta) = \argmax_\theta \ln P(D | \theta) $ \hfill \\
+Note we are using $\ln$, not $\log_2$ as we did for entropy above.  Want it to cancel exponents now. 
+ \hfill \\
+ 
+\hfill \\
+\underline{Binomial Distribution} \hfill \\
+Assumes i.i.d: $D=\{x_i | i=1 \dots n\}, P(D | \theta) = \prod_i P(x_i \mid \theta)$. \hfill \\
+Likelihood function: $P(D | \theta) = \theta^{\alpha_H} (1-\theta)^{\alpha_T}$  \hfill \\
+P(heads) = $\theta$, P(tails) = $1 - \theta$ \hfill \\
+\begin{align*} 
+	\hat{\theta} &= \argmax_\theta \ln P(D| \theta) \\
+	 	 &= \argmax_\theta \ln \theta*{\alpha H}(1-\theta)^{\alpha T}
+\end{align*}
+Find optimal theta by setting the derivative to zero: 
+\begin{align*} 
+	\frac{d}{d\theta} \ln P(D| \theta) &= \frac{d}{d\theta}  \ln \theta*{\alpha H}(1-\theta)^{\alpha T} \\
+	 	 &= \argmax_\theta \ln \theta*{\alpha H}(1-\theta)^{\alpha T} \\
+		 & = \dots = \frac{\alpha_H}{\alpha_H  + \alpha_T}
+\end{align*}
+
+For Binomial, there is exponential decay in uncertainty with \# of observations.  % slide 7 at http://courses.cs.washington.edu/courses/cse446/16wi/Slides/3_PointEstimation.pdf
+You can also find the probability that you are approximately correct (see \href{http://courses.cs.washington.edu/courses/cse446/16wi/Slides/3_PointEstimation.pdf}{notes}). 
+
