@@ -1,0 +1,28 @@
+\section{Gaussians}
+\smallskip \hrule height 2pt \smallskip
+
+Properties of Gaussians: 
+\begin{itemize} 
+	\item Affine transformation (multiplying by a scalar and adding a constant) are Gaussian.
+		If X $\sim$ N($\mu$,$\sigma^2$) and Y = aX + b, then Y $\sim$ N($a\mu+b, a^2\sigma^2$) 
+  	\item Sum of Gaussians is Gaussian.  
+			If X $\sim$ N($\mu_X, \sigma^2_X$), 
+			Y $\sim$ N($\mu_Y, \sigma^2_Y$), 
+			and Z = X+Y, then 
+			Z $\sim$ N($\mu_X+\mu_Y, \sigma_X^2 +\sigma_Y^2$)
+	\item  Easy to differentiate.
+\end{itemize}
+
+Learn a Gaussian: $P(x | \mu, \sigma) = \frac{1}{\sigma \sqrt{2 \pi}}e^\frac{-(x-\mu)^2}{2\sigma^2}$. \hfill \\
+MLE for Gaussian: Prob of i.i.d. samples D = $\{x_1, \dots, x_N\}$:  \hfill \\
+$\displaystyle  P(D|\mu, \sigma) = ( \frac{1}{\sigma \sqrt{2 \pi}})^N \prod_{i=1}^N e^\frac{-(x_i-\mu)^2}{2\sigma^2}$.   \hfill \\
+Note: it is \underline{not} $P(\mu, \sigma | D)$, like I thought in class.  \hfill \\
+Find $\mu_{MLE}$, $\sigma_{MLE} = \argmax_{\mu, \sigma} P(D | \mu, \sigma)$.  \hfill \\
+
+Log-likelihood:  $ \displaystyle \ln P(D | \mu, \sigma) = \ln[\mbox{thing above}] = -N \ln \sigma \sqrt{2\pi} - \sum_{i=1}^N \frac{(x_i - \mu)^2}{2\sigma^2}$.  \hfill \\
+Differentiate w.r.t. $\mu$ and set = 0.  End up with $ \displaystyle \widehat{\mu} = \frac{1}{N} \sum_{i=1}^N x_i$.  \hfill \\
+Differentiate w.r.t. $\sigma$ and set = 0.  End up with $ \displaystyle \widehat{\sigma}^2_{MLE} = \frac{1}{N} \sum_{i=1}^N (x_i-\widehat{\mu})^2$.  \hfill \\
+But actually, that leads to a biased estimate, so people actually use  $ \displaystyle \widehat{\sigma}^2_{unbiased} = \frac{1}{N-1} \sum_{i=1}^N (x_i-\widehat{\mu})^2$  \hfill \\
+
+The conjugate priors: mean: use Gaussian prior:  $ \displaystyle  P(\mu | \nu, \lambda) = \frac{1}{\lambda \sqrt{2 \pi}}e^\frac{-(\mu - \nu)^2}{2\sigma^2} $.  (Instead of $\sigma$, use $\lambda$ and replace the $(x-\mu)^2$ with $(\mu - \nu)^2$).  \hfill \\
+For variance: use Wishard Distribution:  

@@ -1,4 +1,4 @@
-\section{Decison Trees}
+\section{Decision Trees}
 \smallskip \hrule height 2pt \smallskip
 
 Summary:  \hfill \\
@@ -42,6 +42,7 @@ Vocab:
 	\item \textbf{argmax} - the input that leads to the maximum output
 	\item \textbf{greedy} - at each step of the tree-building process, the best split is made at that particular step, rather than looking ahead and picking a split that will lead to a better tree in some future step. % An Introduction to Statistical Learning.pdf pdf pg 320
 	\item \textbf{threshold splits} -   % lec http://courses.cs.washington.edu/courses/cse446/16wi/Slides/2_DecisionTrees_Part2.pdf
+	\item \textbf{random forest}: an ensemble of decision trees which will output a prediction value. Each decision tree is constructed by using a random subset of the training data.  % https://www.kaggle.com/c/titanic/details/getting-started-with-random-forests
 \end{itemize}
 
 
@@ -91,6 +92,11 @@ Two reasonable approaches:
 Start at the bottom, not the top.  The top is most likely to have your best splits.  
 In this way, you only cut high branches if all the branches below were cut. 
 
+Don't use the validation set for pruning.   % TA canvas note 1/24/2015. 
+\textbf{Your code should never use the validation set.}
+The validation set is for \textbf{you} to learn from; the code will always learn from the training set.
+
+
 \underline{Classification vs. Regression Trees}  \hfill \\
 In class we mostly discussed nodes with categorical attributes.  
 You can have continuous attributes (see HW1).  
@@ -99,3 +105,14 @@ When output is discrete, you can chose your splits based on entropy.
 If it is continuous, you need to do something more like least squares.  
 For regression trees, see pg 306 from \href{http://www-bcf.usc.edu/~gareth/ISL/}{ISL} or pg 307 of \href{http://web.stanford.edu/~hastie/local.ftp/Springer/OLD/ESLII_print4.pdf}{ESLII}.
 
+\underline{For discrete data}: \hfill \\
+"For discrete data, you can't split twice on the same feature. Once you've moved down a branch, you know that all data in that branch has the same value for the splitting feature."  % TA board 1/24/2015
+
+\underline{For continuous data}: \hfill \\
+More computationally expensive than discrete data. 
+Often can try to change continuos data to categorical. 
+Might lose some smoothness for real numbers, but might be worth it 
+
+\underline{K-fold validation versus using a held-out data set}: \hfill \\
+If you have enough data to pull out a held-out set, that is preferable to K-fold validation.  % Farhadi said to me 1/25/2016. 
+% This says the opposite: http://stats.stackexchange.com/questions/104713/hold-out-validation-vs-k-fold-validation

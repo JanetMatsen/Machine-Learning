@@ -12,6 +12,7 @@
 \usepackage{graphicx}
 \usepackage{array}
 \usepackage{booktabs}
+\usepackage{bm}  % bold math \bm{}
 \usepackage[bottom]{footmisc}
 \usepackage{tikz}
 \usetikzlibrary{shapes}
@@ -28,6 +29,7 @@
             ]{hyperref}
 \usepackage{relsize}
 \usepackage{rotating}
+
 
  \newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
     \def\independenT#1#2{\mathrel{\setbox0\hbox{$#1#2$}%
@@ -153,7 +155,16 @@ Licensed under \texttt{\href{http://creativecommons.org/licenses/by-nc-sa/4.0/}{
 
 \input{./tex/bayesian.tex}
 
-Let's do this thing. 
+\input{./tex/gaussians.tex}
+
+\input{./tex/linear_regression.tex}
+
+\input{./tex/vocab.tex}
+
+
+\vspace{4in}
+\bigskip
+
 
 \end{multicols*}
 \end{document}

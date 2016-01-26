@@ -1,9 +1,11 @@
-\section{Likelihood}
+\section{Maximum Likelihood \& Maximum a Posteriori}
 \smallskip \hrule height 2pt \smallskip
 
 \underline{Vocab}
 \begin{itemize}
 	\item\textbf{likelihood}: the probability of the data given a parameter.  E.g. $P(D | \theta)$ (for discrete like Binomial).  
+	Need not a pdf; need not be normalized.   %  http://www.robots.ox.ac.uk/~az/lectures/est/lect34.pdf  + Erick
+ 	\item \textbf{log-likelihood}: lower-case: $l(\theta|x) = \log L(\theta | x)$
 	\item \textbf{MLE}: Maximum Likelihood Estimation. 
 	\item \textbf{PAC}: Probability Approximately Correct. 
 \end{itemize}
@@ -35,5 +37,8 @@ Find optimal theta by setting the derivative to zero:
 \end{align*}
 
 For Binomial, there is exponential decay in uncertainty with \# of observations.  % slide 7 at http://courses.cs.washington.edu/courses/cse446/16wi/Slides/3_PointEstimation.pdf
-You can also find the probability that you are approximately correct (see \href{http://courses.cs.washington.edu/courses/cse446/16wi/Slides/3_PointEstimation.pdf}{notes}). 
+You can also find the probability that you are approximately correct (see \href{http://courses.cs.washington.edu/courses/cse446/16wi/Slides/3_PointEstimation.pdf}{notes}).  \hfill \\
+$P(|\widehat{\theta} = \theta*| \geq \epsilon) \leq 2e^{-2N\epsilon^2}$.  Can calculate N (\# of flips) to have error less than $\epsilon$ with probability of being incorrect $\delta$.  Your sensitivity depends on your problem; error on stock market data might cost billions. 
+
+What if you had prior beliefs?  Use MAP instead of MLE.
 
