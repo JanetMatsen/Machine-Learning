@@ -15,6 +15,8 @@ Notation:
 	\item \textbf{$t_j$}: the output variable that you either have data for or are predicting. 
 	\item \textbf{$t(\bm{x})$}: Data.  "Mapping from x to t(x)"
 	\item \textbf{$H$}: $H = \{ h_1, \dots, h_K \}$.  Basis functions.  In the simplest case, they can just be the value of an input variable/feature or a constant (for bias).  
+	\item \textbf{$ || \widehat{w} ||_1$}: "L1" penalty.  The "Manhattan distance".  Like traveling a, b in a pythagorean triangle.  $\sum |x_i|$
+	\item \textbf{$ || \widehat{w} ||_2$}.  "L2" penalty.  Euclidean length of a vector.  Like c in a pythagorean triangle.  $\sqrt{\sum |x_i|^2}$	
 \end{itemize}
 
 \underline{Vocab}:
@@ -29,6 +31,13 @@ Notation:
 	% https://en.wikipedia.org/wiki/Regularization_(mathematics)
 	E.g. applying a penalty for large parameters in the model. 
 	\item \textbf{ridge regression} - 
+	\item \textbf{vector norm}: put in a vector and get out a number like length or size.  Real valued function of some sort of vector or matrix quantity. 
+	\item \textbf{hyperparameters}: in Bayesian analysis, the parameters that don't touch the data.  Like the parameters for the prior on the prior.  Called the ridge regression $\lambda$ a hyperparameter, though this is a stretch in the terminology. 
+	\item \textbf{feature selection}: explicitly select features that can go into your model instead of throwing all features in. 
+	\item \textbf{loss function}: a regularization term, such as squared error $L_2$ for regression
+	\item \textbf{training set error}:  *doesn't include the regularization penalty!*.  A.k.a. "training error".  
+			Sum of squares error divided by the number of points.   See formula later. 
+%	\item \textbf{training error}:  sononomous
 \end{itemize}
 
 \underline{Ordinary Least Squares}: \hfill \\
@@ -65,12 +74,12 @@ $  (\bm{Hw} -\bm{t})^T (\bm{Hw} -\bm{t})$ is the residual error.
 
 \underline{Regression: closed form solution}:  % derivation: http://courses.cs.washington.edu/courses/cse446/16wi/Slides/4_LinearRegression.pdf
 \begin{align*}
-	\bm{w}* = \argmin_w (\bm{Hw} -\bm{t})^T (\bm{Hw} -\bm{t})  & \\
+	\bm{w}^* = \argmin_w (\bm{Hw} -\bm{t})^T (\bm{Hw} -\bm{t})  & \\
 	\bm{F}(\bm{w}) =  \argmin_w (\bm{Hw} -\bm{t})^T (\bm{Hw} -\bm{t}) & \\
 	\triangledown_{\bm{w}}\bm{F}(\bm{w}) = 0 \\
 	2 \bm{H}^T (\bm{H}\bm{w}-\bm{t}) = 0  & \\
 	(\bm{H}^T\bm{H}\bm{w}) - \bm{H}^T\bm{t} = 0 & \\
-	\bm{w}* = (\bm{H}^T\bm{H})^{-1}\bm{H}^T\bm{t} &
+	\bm{w}^* = (\bm{H}^T\bm{H})^{-1}\bm{H}^T\bm{t} &
 \end{align*}
 
 \includegraphics[width=3in]{figures/Regression_matrix_math.pdf}
@@ -90,7 +99,92 @@ $= \argmin_w  [t_j - \sum_i w_i h_i(x_j)]^2 $ \hfill \\
 
 \textbf{Least-squares Linear Regression is MLE for Gaussians!!!}  \hfill \\ \hfill \\
 
-\underline{Regularization in Linear Regression}  \hfill \\
+\subsection{Regularization in Linear Regression}  \hfill \\
 
+\subsubsection{Ridge Regression}  \hfill \\
+Here is our old "ordinary" least squares objective function:   \hfill \\
+$\displaystyle \widehat{w} = \argmin_w \sum_{j=1}^N [t(x_j) - (w_0 + \sum_{i=1}^k w_i h_i(x_j))]^2$   \hfill \\
+It is the same as the previous ones but $i=0$ is pulled out.    \hfill \\
+Now for ridge regression, we use that same notation.  \hfill \\
+And we add a penalty term that isn't applied to the bias feature:
+\begin{align*}
+	\widehat{w}_{ridge} &= \argmin_w \sum_{j=1}^N [t(x_j) - (w_0 + \sum_{i=1}^k w_i h_i(x_j))]^2 + \lambda \sum_{i=1}^k w_i^2   \\
+	&= \argmin_w (\bm{H}\bm{w} - \bm{t})^T(\bm{H}\bm{w}-\bm{t}) + \lambda \bm{w}^T I_{0+k} \bm{w}
+\end{align*}
+That $I_{0+k}$ matrix is this: 
+\includegraphics[width=1.0in]{figures/ridge_identity_matrix_with_zero.pdf}  \hfill \\
+% Erick hasn't seen this notation.
+Allows you to multiply the whole weight array without getting the bias term in there. 
 
- 
+A similar derivation leads to a closed form solution:  \hfill \\
+% http://courses.cs.washington.edu/courses/cse446/16wi/Slides/4_LinearRegression.pdf 
+$w_{ridge}^* = (\bm{H}^T\bm{H} + \lambda I_{0+k})^{-1}\bm{H}^T\bm{t}$ \hfill \\
+(Recall that un-regularized regression was $w^* = (\bm{H}^T\bm{H})^{-1}\bm{H}^T\bm{t}$).  \hfill \\   \hfill \\
+
+How do you chose how large $\lambda$ is? \hfill \\
+* As $\lambda \rightarrow 0$, becomes same as MLE: unregularized.  Large magnitudes of coefficients. \hfill \\
+* As $\lambda \rightarrow \infty$, all weights become 0.  \hfill \\   \hfill \\
+
+\underline{Experiment cycle}: 
+\begin{enumerate}
+	\item select a hypothesis $f$ to best match the training set. 
+	\item isolate a held-out data set if you have enough data, or do K-fold cross-validation if not enough data. 
+	\begin{itemize}
+		\item tune hyperparameters ($\lambda$) on the held-out set or via crossvalidation.  (Try many values of $\lambda$ and chose the best one.)  
+		\item If doing K-fold, divide the data into k subsets.  
+				Repeatedly train on k-1 and test on the remaining one.  
+				Average the results. 
+	\end{itemize}
+\end{enumerate}
+
+\underline{Regularization options}: Ridge vs Lasso.  \hfill \\
+Ridge: 
+\begin{itemize}
+	\item $ \displaystyle \widehat{w}_{ridge} = \argmin_w \sum_{j=1}^N [t(x_j) - (w_0 + \sum_{i=1}^k w_i h_i(x_j))]^2 + \lambda \sum_{i=1}^k w_i^2   $ 
+	\item L2 penalty   
+\end{itemize}
+Lasso: \hfill \\
+\begin{itemize}
+	\item$ \displaystyle \widehat{w}_{ridge} = \argmin_w \sum_{j=1}^N [t(x_j) - (w_0 + \sum_{i=1}^k w_i h_i(x_j))]^2 + \lambda \sum_{i=1}^k |w_i|   $ 
+	\item L1 penalty: linear penalty pushes more weights to zero.  Allows for a type of feature selection.  But it is not differentiable and there is no closed form solution. 
+\end{itemize}
+
+\includegraphics[width=3in]{figures/lasso_and_ridge_geometry.pdf}
+
+This figure shows: 
+\begin{itemize}
+	\item The contour lines represent the maximum likelihood of the vector of weights.  
+		All points on the contour have equal likelihood.
+	\item The two axes represent different parameters for two of the weights.  (regression coefficients)
+	\item Circles are characteristic of ridge regression (with L2 penalty): Penalty = the magnitude of the vector.
+	\item Shapes that are pointy on the axes are characteristic of Lasso (with L1 penalty): the vector components get added. 
+	\item Where the likelihood function touches in this $w_1, w_2$ space represents the coefficients of the weights.
+		For Ridge Regression, we see that small but nonzero values of the coefficients can be obtained.
+		For Lasso Regression, the curves are most likely to touch the diamond on the axes, 
+		resulting in coefficients that are truly zero. 
+\end{itemize} 
+
+\includegraphics[width=1.8in]{figures/lambda_with_w2.pdf}  \includegraphics[width=1.6in]{figures/lambda_with_w1.pdf}
+Don't compare coefficient magnitudes at given $\lambda$s, 
+but do note that for Ridge the gradually come away from the zero axis and in Lasso they are zero until they pop out.   \hfill \\ \hfill \\
+
+\underline{Bias-Variance Tradeoff}:   \hfill \\
+Your choice of hypothesis class (e.g. degree of polynomial) inroduces learning bias.  \hfill \\
+\textbf{A more complex class } $\rightarrow$ less bias and more variance.  \hfill \\  \hfill \\
+
+\underline{Training Set Error}:  (training error) \hfill \\
+$\displaystyle  error_{train}(\bm{w}) = \frac{1}{N_{train}} \sum_{j=1}^{N_{train}}(t(\bm{x_j})-\sum_{i} w_i h_i(\bm{x_j}))^2$
+Decreases exponentially with model complexity.  
+\hfill \\  \hfill \\
+% http://courses.cs.washington.edu/courses/cse446/16wi/Slides/4_LinearRegression.pdf
+
+\underline{Prediction Error}:   \hfill \\
+Since the training set error can be a poor measure of the "quality" of the solution, we can use prediction error ("true error").  
+The error over all possibilities.   Instead of sum, take expectation. 
+\begin{align*}
+	error_{true}(\bm{w}) &= E_X[(t(\bm{x_j})-\sum_{i} w_i h_i(\bm{x_j}))^2] \\
+					&= \int_x (t(\bm{x_j})-\sum_{i} w_i h_i(\bm{x_j}))^2 p(\bm{x}) d\bm{x}
+\end{align*}
+How to get $p(\bm{x})$?  Need to know the true distribution of the data (?) \hfill \\
+Prediction error is high when the model is too simple \underline{and} too complex, unlike training set error which only penalizes too simple. 
+
