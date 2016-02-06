@@ -1,0 +1,246 @@
+\smallskip \hrule height 2pt \smallskip
+\section{Naive Bayes}
+\smallskip \hrule height 2pt \smallskip
+
+Vocabulary
+\begin{itemize}
+	\item \textbf{$h_{NB}(x)$} the function that returns the best class.  %Erick 2/4/2016
+
+	\item \textbf{.}
+	\item \textbf{.}
+	\item \textbf{.}
+\end{itemize}
+
+Advantages:
+\begin{itemize}
+	\item Fast to train (single scan). Fast to classify  % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
+	\item Not sensitive to irrelevant features  % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
+	\item Handles real and discrete data   % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
+	\item Handles streaming data well   % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
+\end{itemize}
+Disadvantages:
+\begin{itemize}
+	\item Assumes independence of features  % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
+	\item All observations have equal weight in prediction. % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
+\end{itemize}
+
+Vocab:
+\begin{itemize}
+	\item \textbf{prior}:  $P(Y)$, the probability of a label/class.
+	\item \textbf{Likelihood}: $P(\bm{X} | Y)$. 
+	%\item 
+	%\item \textbf{}
+\end{itemize}
+ 
+\subsubsection{Conditional independence}
+$X$ is conditionally independent of $Y$ given $Z$ if the probability distribution
+for $X$ is independent of the value of $Y$, given the value of $Z$: \hfill \\
+$(\forall i, j, k)$ $P(X=i | Y = j | Z=k) = P(X=i | Z=k)$.  \hfill \\
+E.g. P( Thunder $|$ Rain, Lightening) = P(Thunder $|$ Lightning) \hfill \\
+Equivalent to P(X, Y $|$ Z) = P(X $|$ Z) P(Y $|$ Z)  \hfill \\ \hfill \\
+
+TODO: put in plain english. 
+
+\subsubsection{Naive Bayes Assumption}
+Features are independent given the class: \hfill \\
+\begin{align*}
+	P(X_1, X_2 | Y) &= P(X_1 | X_2, Y) P(X_2 | Y)  \\
+				&= P(X_1 | Y) P(X_2| Y)      \\
+				& \mbox{more generally:}      \\
+	P(X_1, \dots, X_n | Y) &=  \prod_i P(X_i | Y)			
+\end{align*}
+
+This reduces the number of parameters a lot!
+Say you had 5 features.  
+Before this assumption, each of your 5 features could be dependent.   Then you have to assign a probability to each state.  If each is binary, then you can say $2^5$.  
+After this assumption, you would just have 5 parameters.   \hfill\\ \hfill \\
+
+\subsubsection{Naive Bayes Classifier}
+Given:
+\begin{itemize}
+	\item a prior $P(Y)$  
+	\item $n$ conditionally independent features $\bm{X}$ given the class $Y$
+	\item calculated likelihood for each $X_i$ of the form $P(X_i | Y)$
+\end{itemize}
+Your decision rule is:   (note $h_{NB}$ is Naive Bayes, not Neg Binom) 
+\begin{align*}
+	y^* = h_{NB}(x) &= \argmax_y P(y) P(x_1, \dots, x_n | y)   \\
+			&=  \argmax_y P(y) \prod_i P(x_i | y)
+\end{align*}
+
+\noindent
+Although the assumption that the predictor (independent) variables are independent is not always accurate, it does simplify the classification task dramatically, since it allows the class conditional densities $p(x_k | C_j)$ to be calculated separately for each variable, i.e., it reduces a multidimensional task to a number of one-dimensional ones.
+In effect, Naive Bayes reduces a high-dimensional density estimation task to a one-dimensional kernel density estimation. Furthermore, the assumption does not seem to greatly affect the posterior probabilities, especially in regions near decision boundaries, thus, leaving the classification task unaffected.
+% http://www.statsoft.com/textbook/naive-bayes-classifier
+
+Na•ve Bayes is NOT sensitive to irrelevant features.  % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
+However, this assumes that we have good enough estimates of the probabilities, so the more data the better.
+
+\subsubsection{Digit classification example}
+Simplify images of digits to pixels, and assign them True or False for whether they are "on".  \hfill \\
+Each input maps to a feature in a vector.  E.g. pixel in the 0th for and 0th column is $F_{0,0}$.   \hfill \\
+The Naive Bayes model is: \hfill \\
+$ \displaystyle P(Y | F_{0,0}, \dots , F_{15,15}) \propto P(Y) \prod_{i,j} P(F_{i,j} | Y)$.
+We assume the features are independent given the class.  
+We need to learn the distribution of pixels on at each pixel given each number.  \hfill \\
+How to calculate the prior, P(Y): \hfill \\
+$\displaystyle P(Y) = \frac{count(Y=y)}{\sum_{y'} Count(Y=y'}$ (denominator is summing over all y values) \hfill \\
+How to calculate the likelihood:  \hfill \\
+$\displaystyle P(X_i =x | Y=y) = \frac{Count(X_i=x, Y=y)}{\sum_{x'}Count(X_i=x', Y=y)}$
+
+
+\subsubsection{For binary features, use the Beta prior and MAP.} 
+Just like likeihood of binomial previously! 
+$\displaystyle P(\theta | D) = \frac{\theta^{\beta_H + \alpha_H - 1}(1-theta)^{\beta_T + \alpha_T - 1}}{B(\beta_H + \alpha_H, \beta_T + \alpha_T)} \approx Beta(\beta_H + \alpha_H, \beta_T + \alpha_T) $
+Chose $\theta$ using MAP:  \hfill \\
+$\displaystyle  \widehat{\theta} = \argmax_\theta P(\theta | D) = \frac{\alpha_H + \beta_H - 1}{\alpha_H + \beta_H + \alpha_T + \beta_T - 2}$.  \hfill \\
+Once again, the Beta prior is equivalent to adding extra observations for each feature. \hfill \\
+If you don't have a lot of observations, the prior is important.  \hfill \\
+And as the number of observations goes to $\infty$, the prior is "forgotten". 
+
+\subsubsection{Multinomials: Laplace Smoothing}
+\underline{Laplace's estimate}: \hfill \\
+Pretend you saw every outcome $k$ extra times: \hfill \\
+$\displaystyle P_{LAP, k}(x) = \frac{c(x) + k}{N + k|X|}$ \hfill \\
+$N = $ number of observations.  \hfill \\
+$|X| = $ the number of categories you are counting.  \hfill \\
+$k$ is the strength of the prior.  \hfill \\  \hfill \\
+
+Example: 
+$\displaystyle P_{LAP, 0}(X) = \langle \frac{2}{3}, \frac{1}{3} \rangle$.  \hfill \\
+Set $k=1$.  $|X|$ is 2.  $N$ is 3.  
+$\displaystyle P_{LAP, 1}(X) = \langle \frac{3}{5}, \frac{2}{5} \rangle$  \hfill \\
+$\displaystyle P_{LAP, 100}(X) = \langle \frac{102}{203}, \frac{101}{203} \rangle$  \hfill \\
+
+\underline{Laplace for conditionals:}
+Smooth each condition independently:  \hfill \\
+$\displaystyle  P_{LAP, k}(x|y) = \frac{c(x,y) + k}{c(y) + k |X|}$
+
+\subsubsection{Subtleties of the NB classifier}
+\textbf{(1) Usually the features are not conditionally independent}: \hfill \\
+$P(X_1, \dots, X_n | Y) \neq \prod_i P(X_i | Y)$ \hfill \\
+The actual probabilities $P(Y | \bm{X})$ are often biased towards 0 or 1.  
+Nonetheless, NB is the single most used classifier out there.  
+It performs well even when the independence assumption is violated.  \hfill \\
+\textbf{(2) Overfitting} \hfill \\
+Conditional probabilities can easily be calculated as zero. 
+Zero probabilities kill that class' chance at being called. \hfill \\
+??? If the feature is binary, we can use MAP with a beta prior. 
+??? That's equivalent to adding extra observations for each feature. 
+
+\subsubsection{NB for text classification}
+\begin{itemize}
+	\item $i$ is the $i^{th}$ word
+	\item NB assumption(\_\_\_) helps a lot.  
+		$P(X_i=x_i |Y=y)$ is just the probability of observing word $x_i$ in a document on topic $y$.  
+		$ \displaystyle  h_{NB}(x) = \argmax_y P(y) \prod_{i=1}^{LengthDoc} P(x_i | y)$  
+	\item Additional assumption: bag of words model. \hfill \\
+		Order of words ignored.  Works really well.  \hfill \\
+		$P(X_i = x_i | Y=y) = P(X_k = x_i | Y=y)$  ($k$ is the $k^{th}$ word (?); all positions have the same distribution).  \hfill \\
+		$P(y) = \prod_{i=1}^{LengthDoc} P(x_i | y)$
+	\item Prior, $P(Y)$, is the fraction of documents of each topic.
+	\item Likelihood, $P(X_i | Y)$ is count for how many times you saw the word in documents of this topic.  
+		This distribution is shared across all positions $i$.
+	\item Testing: Use Naive Bayes decision rule.  \hfill \\
+		$ \displaystyle  h_{NB}(x) = \argmax_y P(y) \prod_{i=1}^{LengthDoc} P(x_i | y)$
+\end{itemize}
+
+\subsubsection{NB for continuous $X_i$}
+
+\begin{itemize}
+	\item $k$ is an index over all possible labels. 
+	\item $i$ is the $i^{th}$ feature. Here it is the pixel.
+	\item $j$ is the $j^{th}$ training example.  
+	\item $X_i^j$ is the $i^{th}$ pixel in the $j^{th}$ training sample. 
+	\item $Y^j$ is the label corresponding to the $j^{th}$ training example. 
+	\item $y_k$ is the $k^{th}$ label
+	\item $j$ is $j^{th}$ training example.  
+	\item $\delta(x) = 1$ if x true, else 0. 
+	\item $h$: the function that returns the best class.  % Erick 2/4/2016
+	\item in plain english, \_\_\_\_\_\_ 
+\end{itemize}
+
+
+Example: character recognition where the darkness of each pixel is continuous.  \hfill \\
+\textbf{Gausian Naive Bayes (GNB)}: 
+	$ \displaystyle P(X_i = x | Y = y_k) = \frac{1}{\sigma_{ik} \sqrt{2 \pi}} e^\frac{-(x- \mu_{ik})^2}{2 \sigma_{ik}^2}$  \hfill \\
+\begin{itemize}
+	\item $\mu_{ik}$ is the mean of the values for the $i^{th}$ feature for the $k^{th}$ class. \hfill \\
+	\item $\sigma_{ik}$ is the standard deviation of the values for the $i^{th}$ feature for the $k^{th}$ class. 
+\end{itemize}	
+	
+Sometimes we assume one or both of these:
+\begin{itemize}
+	\item variance is independent of $Y$ (i.e. $\sigma_i$)
+	\item variance is independent of $X_i$ (i.e. $\sigma_k$)
+\end{itemize}
+If we assume both, we assume just one $\sigma$ without subscripts. \hfill \\   \hfill \\
+
+Estimating parameters for discrete $Y$ and continuous $X_i$:  \hfill \\
+\begin{itemize}
+	\item \textbf{mean}:  $\displaystyle \widehat{\mu}_{ik} = \frac{1}{\sum_j \delta(Y^j = y_k)} \sum_j X_i^j \delta(Y^j = y_k)$
+		\begin{itemize}
+			\item first term: divide by the number of training examples that are of class k. 
+			\item second term: summing the continuous input of pixel i for all examples 
+				in the training set that match label k.  
+			\item so this is just an average brightness for pixel $i$ given class $k$ using 
+				all the training data.   
+		\end{itemize}
+	\item \textbf{variance}:  $\displaystyle  \widehat{\sigma}_{ik}^2 = \frac{1}{\sum_j \delta(Y^j = y_k) - 1} \sum_j (x_i^j - \widehat{\mu}_{ik})^2 \delta(Y^j = y_k)$
+		\begin{itemize}
+			\item first term: divide by the number of training points of class k minus 1. 
+			\item second term: sum the squared difference in brightness of pixel $i$ 
+				compared to the mean for that pixel and label. 
+		\end{itemize}
+\end{itemize}
+
+\subsubsection{When Bayes Classifier is Optimal:}
+In Bayes we are learning the function $h$ that produces labels $Y$ based on inputs $\bm{X}$.  
+More formally: \hfill \\
+$h : \bm{X} \mapsto Y$, or \hfill \\
+we are learning "the function h that maps features $\bm{X}$ to labels Y". \hfill \\ \hfill \\
+
+If you know the true $\displaystyle P(Y | \bm{X})$, then \hfill \\
+$\displaystyle h_{Bayes} = \argmax_y P(Y=y | \bm{X} = x)$.   \hfill \\  \hfill \\
+Note the subscript is Bayes, not Naive Bayes; no assumption of conditional independence.
+Also, the conditionality is back to likelihood instead of posterior.  \hfill \\  \hfill \\
+
+Theorem: Bayes (not NB) classifier $h_{Bayes}$ is optimal.  \hfill \\
+$error_{true}(h_{Bayes}) \leq error_{true}(h)$, $\forall h$ \hfill \\
+\hfill \\
+\textit{This is theoretical result: we don't know $P(\bm{x})$.  We can't calculate the true Bayes classifier b/c we don't know the distribution of all the data.)}
+We also don't know $P(Y | \bm{X})$, the true class' highest probability.  Usually that's hidden; if we knew it we would go home happy.  
+
+
+Plain english: the predictions you get from Bayes are better than any other function/prediction available. \hfill \\ \hfill \\
+Proof:  
+\begin{align*}  % changed notation to capital p, X, Y
+	P_h(error) = \int_x P_h & (error | \bm{X}) P(\bm{X}) \\  
+		& \mbox{           def. of error: } P_h(error| \bm{x}) = \int_y \delta(h(\bm{X}), Y) P(Y| \bm{X}) \\
+		& \mbox{               (note, usually we'd sum over the classes, Y)}  \\
+			= \int_x \int_y & \delta(h(\bm{X}), Y) P(Y | \bm{X}) P(\bm{X})  \\
+			& \mbox{     (the double integral is zero when $P(Y | \bm{X})$ is largest,} \\
+			& \mbox{     which is when the correct classification was selected.)}
+\end{align*} 
+We are averaging over novel data sets that are generated under the same conditions.
+
+%Note that this is different notation than the rest.  Large vs small P.  
+Different notation: delta has a comma in the parentheses and not an equality.   \hfill \\
+\begin{itemize}
+	\item $P_h(error)$ is probability of error across all classifications. 
+	\item $\delta(h(\bm{X}, Y)$ is 1 if your X is classified right and 0 if not. 
+	\item $P_h(error| \bm{x})$ is the probability that your classification is wrong.  
+	\item $\int_x P_h (error | \bm{X}) P(\bm{X}) $ is the expectation of the errors.  
+	\item $\delta(h(\bm{X}), Y)$ is 
+\end{itemize}
+
+Proof in words:  ??? 
+
+Aside: note that for one classification y is not a vector.  It is a point. 
+
+
+
+\subsubsection{Misc NB}
+
+Naive Bayes continuous video: 
+\url{https://www.youtube.com/watch?v=r1in0YNetG8}

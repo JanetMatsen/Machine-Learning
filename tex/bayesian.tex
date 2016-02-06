@@ -26,6 +26,8 @@ Note: you are multiplying two PDFs here.  When you plug in particular data, your
 
 As you get more and more data, $P(\theta | D)$ grows more and more narrow.   
 Like with more cannon ball holes, you are more certain about your angle $\theta$.  \hfill \\
+Murphy 2012 pg 70: In general, when we have enough data, the posterior $p(h|D)$ becomes peaked on a single concept, namely the MAP estimate, i.e., $p(h|D) \rightarrow \delta_{\hat{h}MAP}(h)$ where $\delta_{\hat{h}MAP} = \argmax_h p(h|D)$ is the posterior mode, and wehre $\delta$ is the Dirac measure defined by $\delta_x(A) = 1$ if $x \in A$ and  = 0 if $x \notin A$   
+\hfill \\
 \hfill \\
 
 About the $P(D)$.  It is the "marginal probability", 
@@ -39,8 +41,6 @@ $P(\theta) \propto 1 \rightarrow P(\theta | D) \propto P(D | \theta)$ \hfill \\
 
 Note: if you have D first it is Likelihood, and if you have $\theta$ first it is the Posterior.  ($P(D | \theta)$ $P(\theta | D)$). \hfill \\
 
-
-
 \underline{Vocab}
 \begin{itemize}
 	\item \textbf{prior}: 
@@ -49,28 +49,56 @@ Note: if you have D first it is Likelihood, and if you have $\theta$ first it is
 	\item \textbf{posterior distribution}:  (same as "posterior")  % E confirmed 1/25/2016
 	\item \textbf{Maximum likelihood}:  Find the parameter that makes the probability highest.  E.g. $\theta$ for coin toss. (A famous "point estimator")
 	\item \textbf{MAP}:  Maximum a posteriori (estimation).  
-		Maximize the posterior instead of the likelihood.  Take the value that causes the highest point in the posterior distribution. 
+		Maximize the posterior instead of the likelihood.  
+		Take the value that causes the highest point in the posterior distribution.   \hfill \\
+		% Erick description of MAP:
+		Just take the peak of your posterior.  Forget about the uncertainty.  
+		Pretty much like MLE, but you also have some influence of a prior. 
+	\item \textbf{conjugate}: If our posterior is a distribution that is of the same family as our prior, 
+			then we have conjugacy. We say that the prior is conjugate to the likelihood. 
+			% http://www.people.fas.harvard.edu/~plam/teaching/methods/conjugacy/conjugacy_print.pdf
+	\item \textbf{conjugate model}: great because we know the exact distribution of the posterior so we can easily 
+		simulate or derive quantities of interest analytically.  In practice, we rarely have conjugacy.
+			% http://www.people.fas.harvard.edu/~plam/teaching/methods/conjugacy/conjugacy_print.pdf
 \end{itemize}
 
-% Erick description of MAP:
-Just take the peak of your posterior.  Forget about the uncertainty.  
-Pretty much like MLE, but you also have some influence of a prior. 
+% from: http://www.people.fas.harvard.edu/~plam/teaching/methods/conjugacy/conjugacy_print.pdf  :
+\includegraphics[width=3.3in]{figures/conugate_distributions.pdf}
+
 
 \hfill \\
 \underline{Thumbtack Problem}, Bayesian style (MAP)  \hfill \\  % http://courses.cs.washington.edu/courses/cse446/16wi/Slides/3_PointEstimation.pdf
  Start as usual with Bayes' without $P(D)$: $P(\theta | D) \propto P(D | \theta) P(\theta)$.   \hfill \\ 
 Define parameters: $\theta$ is the probability of one side up.  
 $\alpha_H$ and $\alpha_T$ are the number of heads and tails tossed. 
-$\beta_H$ and $\beta_T$ are the  parameters of the prior. 
+$\beta_H$ and $\beta_T$ are the  parameters of the prior.  
+These "beta prior parameters" can be thought of as "fake counts" in the case of the beta distribution.
+
+% However, I don't suggest thinking of the beta prior parameters (here \beta_H and \beta_T) as the number we would "expect". Rather, they are abstract parameters that determine the shape of the prior distribution. 
+% In the special case of the Beta distribution they can be thought of as "fake counts".
 
 \begin{itemize}
-	\item use Binomial as the likelihood:  $ \displaystyle  P(D | \theta) = \theta^{\alpha_H} (1-\theta)^{\alpha_T}$
-	\item the prior is $ \displaystyle P(\theta) = \frac{\theta^{\beta_H}(1-\theta)^{\beta_T - 1}}{B(\beta_H, \beta_T)} \sim \Beta(\beta_H, \beta_T)$.   The B in the denominator is for the beta function (not same as beta distribution). 
+	\item use Binomial as the likelihood:  $ \displaystyle  P(D | \theta) = \theta^{\alpha_H} (1-\theta)^{\alpha_T}$.  \hfill \\
+	Note: we are estimating $\theta$ after seeing $\alpha_H$ heads and  $\alpha_T$ tails.  
+	\item the prior is $ \displaystyle P(\theta) = \frac{\theta^{\beta_H}(1-\theta)^{\beta_T - 1}}{B(\beta_H, \beta_T)} \sim \Beta(\beta_H, \beta_T)$.   \hfill \\
+	Now $\beta_H$ and  $\beta_T$ are the number of heads and tails you expected to see. 
+	The B in the denominator is for the beta function (not same as beta distribution).  \hfill \\
 	\item To get a simple posterior form, use a conjugate prior.  Conjugate prior of Binomial is the Beta Distribution.  See \href{http://courses.cs.washington.edu/courses/cse446/16wi/Slides/3_PointEstimation.pdf}{slides} for math: $P(\theta | D) \sim \Beta(\beta_H + \alpha_H, \beta_T, \alpha_T)$
 	\item note that there are similar terms in the prior and likelihood functions.  Some will cancel out when you multiply them. 
-	\item $\displaystyle P(\theta | D) = \frac{\theta^{\beta_H + \alpha_H - 1}\cdot (1-\theta)^{\beta_T + \alpha_T - 1}}{B(\beta_H + \alpha_H, \beta_T + \alpha_T)} \sim \Beta(\beta_H + \alpha_H, \beta_T + \alpha_T )$. 
+	\item $\displaystyle P(\theta | D) = \frac{\theta^{\beta_H + \alpha_H - 1}\cdot (1-\theta)^{\beta_T + \alpha_T - 1}}{B(\beta_H + \alpha_H, \beta_T + \alpha_T)} \sim \Beta(\beta_H + \alpha_H, \beta_T + \alpha_T )$.  \hfill \\
+	So your probability is shaped by the number of heads/tails you expected to see ($\beta_H$, $\beta_T$) and the number of heads/tails you actually saw ($\alpha_H$, $\alpha_T$).
+	\item Apply MAP: $ \displaystyle  \widehat{\theta} = \argmax_\theta P(\theta | D) = \frac{\alpha_H + \beta_H - 1}{\alpha_H + \beta_H + \alpha_T + \beta_T - 2}$.  \hfill \\
+	Effectively, our prior is just adding $\beta_H - 1$ heads flips and $\beta_T - 1$ tail flips to the dataset.
+		% http://www.people.fas.harvard.edu/~plam/teaching/methods/conjugacy/conjugacy_print.pdf
 	\item The Beta prior is equivalent to extra thumbtack flips.  As $N \rightarrow \infty$, the prior is “forgotten”.  But for small sample size, prior is important.  
 \end{itemize}
+
+\subsubsection{Beta Distribution}
+%\includegraphics[width=2in]{figures/beta_distribution.png}
+
+\includegraphics[width=2.5in]{figures/beta_pic1.pdf}  
+\includegraphics[width=2.5in]{figures/beta_pic2.pdf}
+
 
 \underline{MAP (point) estimation}:
 \begin{enumerate}
