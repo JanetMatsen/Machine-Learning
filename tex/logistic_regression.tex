@@ -3,6 +3,10 @@
 
 Another probabilistic approach to classification (categorical predictions).   \hfill \\
 Can use discrete or continuous outputs. \hfill \\ % https://www.youtube.com/watch?v=zAULhNrnuL4
+It's a linear classifier; the decision rule is a hyperplane. \hfill \\  % Slide 6 summary
+You optimize it (find weights) by gradient ascent, which works because it is concave.    \hfill \\  % Slide 6 summary
+You can use "maximum conditional a posteriori" for regularization.    \hfill \\  % Slide 6 summary
+
 \hfill \\ 
 
 \underline{Summary from non-class sources:} \hfill \\
@@ -36,6 +40,7 @@ Note that our predictions are now on the log scale; this impacts interpretation 
 
 Notation:  \hfill \\
 \begin{itemize}
+	\item $x_i^j$: the $i^{th}$ attribute of data point $j$
 	\item $y^j$: the $j^{th}$ class  %(?)
 	\item $x^j$: the $j^{th}$ training example
 \end{itemize}
@@ -152,7 +157,123 @@ $\eta$ is the learning rate.  $\eta > 0$.
 Your next weights $(t+1)$ become: 
 $w_i^{(t+1)} \leftarrow w_i^{(t)} + \eta \frac{\partial l(\bm{w})}{\partial w_i}$   \hfill \\
 \hfill \\
-Gradient ascent is the simplest  of optimization approaches.  Note that conjugate gradient ascent is much better (see reading).(?)
+Gradient ascent is the simplest  of optimization approaches.  
+Note that conjugate gradient ascent is much better (see reading).(?)  \hfill \\
+
+See slides for derivation of: \hfill \\
+$\displaystyle \frac{\partial l(w)}{\partial w_i} = \sum_j x_i^j (y^j - P(Y^j = 1 | x^j, w))$
+
+\subsubsection{Example of gradient ascent to maximize conditional log likelihood}
+(M(C)LE; C for conditional) \hfill
+Use the equations: \hfill \\
+\begin{itemize}
+	\item \textbf{eq 1:} $w_i^{(t+1)} \leftarrow w_i^{(t)} + \eta \frac{\partial l(\bm{w})}{\partial w_i}$
+	\item \textbf{eq 2:} $\displaystyle \frac{\partial l(w)}{\partial w_i} = \sum_j x_i^j (y^j - P(Y^j = 1 | x^j, w))$
+	\item \textbf{eq 3:} $P(Y=1 | X, W) = \frac{\exp(w_0 + \sum_i w_i X_i)}{1 + \exp(w_0 + \sum_i w_i X_i)}$
+	\item \textit{note:} superscript is for the $j^{th}$ data point and 
+			subscripts are for the $i^{th}$ value of the input ($x$) array.  
+			Don't forget that there is an $i=0$ $(x_0 = 1)$ bias term. 
+\end{itemize}
+\includegraphics[width=1.5in]{figures/gradient_ascent_logistic_regression.pdf}   \hfill \\
+\begin{itemize}
+	\item begin with t=0 and $w = [w_0 + w_1 + w_2] = [0, 0, 0]$
+	\item calculate \textbf{eq 3} for each Y.  
+		\begin{itemize}
+			\item For j = 0:  
+				\begin{align*}
+					P(Y^0 = 1 | x^0, w) &= \frac{\exp(0 + 0*3 + 0^(-3))}{(1 +  \exp(0 + 0*3 + 0*(-3)))} \\
+						&= 1/(1+1) = 1/2
+				\end{align*}
+			\item For j = 1:  
+				\begin{align*}
+					P(Y^1 = 1 | x^1, w) &= \frac{\exp(0 + 0*(-2) + 0^(2))}{(1 +  \exp(0 +  0*(-2) + 0^(2)))} \\
+						&= 1/(1+1) = 1/2
+				\end{align*}
+		\end{itemize} 
+	\item calculate the terms that go into \textbf{eq 2} by looping over the 3 values of $i$ (bias and two other coefficients) and 2 values of $j$ (2 data points).  
+		\begin{itemize}
+			\item for $i=0, j=0$: ($j=$0th (1st) training example, bias term) \hfill \\
+				 $x_0^0(y^0 - P(Y^0=1|x^0, w)) = 1(1-0.5) = 0.5$ 
+			\item for $i=0, j=1$: ($j=$1st (2nd) training example, bias term) \hfill \\
+				 $x_0^0(y^0 - P(Y^0=1|x^0, w)) = 1(0-0.5) = -0.5$ 
+			
+			\item for $1=1, j=0$: ($j=$0th (1st) training example, $x_1$ term) \hfill \\
+				 $x_1^0(y^0 - P(Y^0=1|x^0, w)) = -2(1-0.5) = 1.5$ 
+			\item for $i=1, j=1$: ($j=$1st (2nd) training example, $x_1$ term) \hfill \\
+				 $x_1^1(y^1 - P(Y^1=1|x^1, w)) = -2(0-0.5) = 1.0$ 
+				 
+			\item for $1=2, j=0$: ($j=$0th (1st) training example, $x_2$ term) \hfill \\
+				 $x_2^0(y^0 - P(Y^0=1|x^0, w)) = -3(1-0.5) = -1.5$ 
+			\item for $i=2, j=1$: ($j=$1st (2nd) training example, $x_2$ term) \hfill \\
+				 $x_2^1(y^1 - P(Y^1=1|x^1, w)) = 2(0-0.5) = -1.0$ 
+		\end{itemize}
+	\item Now we can compute the gradient (\textbf{eq 2}):
+		\begin{itemize}
+			\item $\nabla_w l(\bm{w}) = [\frac{\partial l(w)}{\partial w_1}, \frac{\partial l(w)}{\partial w_2}, \frac{\partial l(w)}{\partial w_3}]$
+				\begin{align*}
+					%\frac{\partial l(w)}{\partial w_i} &= \sum_j x_i^j (y^j - P(Y^j = 1 | x^j, w)) \\
+						&= [0.5 - 0.5, 1.5 + 1.0, -1.5 - 1] = [0, 2.5, -2.5]
+				\end{align*}
+		\end{itemize}
+	
+	\item Use $\eta = 0.1$ to scale the gradient:  (\textbf{eq 1}) \hfill \\
+			$w = [0,0,0] + 0.1*[0, 2.5, 2.5] = [0, 0.25, -0.25]$
+	\item Start over with \textbf{eq 3} and updated $w$.
+		\includegraphics[width=2in]{figures/logistic_regression_ex_loop_2.pdf}
+\end{itemize}
+
+How to do more algorithmically:  \hfill \\
+You don't have to get all the info to update all the weights at once.  
+Do them one at a time.  \hfill \\
+\includegraphics[width=2.5in]{figures/gradient_descent_algorthim.pdf}
+
+\subsubsection{Overfitting in Logistic Regression}
+Like in \_\_\_\_\_\_\_\_, the maximum likelihood solution prefers higher weights.  
+Higher weights can give higher likelihood of properly classifying examples close to the decision boundary.  
+This over-fitting causes features to have larger influences on the decision:  \textbf{beware of overfitting!!!}. 
+Again, you can use regularization to penalize high weights.
+This will be covered more later. 
+\hfill \\
+
+\subsubsection{MAP for Logistic Regression}
+Above was M(Conditional)LE.     \hfill \\
+Recall that the MAP/MLE difference is \_\_\_\_\_\_\_\_\_.  \hfill \\
+Priors on $\bm{w}$ are commonly added for regularization.    \hfill \\
+Helps avoid very large weights and overfitting.    \hfill \\
+$P(\bm{w} | Y, \bm{X}) \propto P(Y, | \bm{X}, \bm{w} ) P(\bm{w} )$  \hfill \\
+Use a normal distribution with zero mean and "identity covariance".  (\_\_\_\_):  \hfill \\
+$ \displaystyle  P(\bm{w} ) = \prod_i \frac{1}{\kappa \sqrt{2 \pi}} e^{\frac{-w_i^2}{2 \kappa^2}}$ \hfill \\
+\hfill \\
+
+MAP estimate: 
+\begin{align*}
+	w* &= \argmax_w \ln[P(\bm{w}) \prod_{j=1}^N P(y^j | x^j, \bm{w})]  \\
+		&= \argmax_w \ln[ \prod_i \frac{1}{\kappa \sqrt{2 \pi}} e^{\frac{-w_i^2}{2 \kappa^2}}   \prod_{j=1}^N P(y^j | x^j, \bm{w})]
+\end{align*}
+Add $\log P(\bm{w})$ to the objective:
+\begin{align*}
+	\ln P(\bm{w}) & \propto - \frac{\lambda}{2} \sum_i w_i^2 \\
+	\frac{\partial \ln P(\bm{w})}{\partial w_i} &= \lambda w_i
+\end{align*}
+This is a quadratic penalty (???) that drives the weights toward zero. \hfill \\
+It adds a negative linear term to the gradients (???).  \hfill \\
+Also applicable in linear regression! 
+
+\subsubsection{Review: MLE vs. MAP for Logistic Regression}
+\underline{Maximum conditional likelihood estimate:}
+\begin{align*}
+	w* &= \argmax_w \ln[\prod_{j=1}^N P(y^j | x^j, \bm{w})] \\
+	w_i^{(t+1)} & \leftarrow w_i^{(t)} + \eta \sum_j x_i^j [y^j - \widehat{P}(Y^j = 1 | x^j, \bm{w})]\\
+\end{align*}
+
+\underline{Maximum conditional a posteriori estimate:}
+\begin{align*}
+	w* &= \argmax_w \ln[P(\bm{w}) \prod_{j=1}^N P(y^j | x^j, \bm{w})] \\
+	w_i^{(t+1)} & \leftarrow w_i^{(t)} + \eta \{ -\lambda w_i^{(t)} +  \sum_j x_i^j [y^j - \widehat{P}(Y^j = 1 | x^j, \bm{w})]\\
+\end{align*}
+
+\hfill \\  \hfill \\
+
 
 Vocab \hfill \\
 \begin{itemize}
@@ -160,9 +281,75 @@ Vocab \hfill \\
 	\item \textbf{generative}:  E.g. $p(Zebra | Data)$, $p(No Zebra | Data)$. 
 \end{itemize}
 
+\subsubsection{Multiclass Logistic Regression (discrete labels)}
+Define a weight vector $w_i$ for each $y_i$ where i ranges from $1$ to $R-1$ for $R$ classes.
+You don't need a weight vector for the $R^{th}$ class b/c its probability is 1 - the sum of the rest.  \hfill \\
+\includegraphics[width=1in]{figures/multiclass_logistic.pdf} \hfill \\
+\begin {align*}
+	P(Y=1 | X ) & \propto \exp(w_{10} + \sum_i w_{1i}X_i)  \\
+		& \mbox{note: $\bm{w}$ is now a matrix, not an array.}  \\
+	P(Y=2 | X ) & \propto \exp(w_{20} + \sum_i w_{2i}X_i)  \\
+	 & \dots \\
+	 & \mbox{the last probability is defined relative to the rest.}  \\
+	P(Y=r | X ) &= 1- \sum_{j=1}^{r-1} P(Y=j | X)
+\end{align*}
+After normalizing, your probabilities become: 
+\begin {align*}
+	P(Y=y_k | X ) &=  \frac{\exp(w_{k0} + \sum_{i=1}^n w_{ki} X_i)}{1 + \sum_{j=1}^{R-1} \exp(w_{j0} + \sum_{i=1}^n w_{ji}X_i)} \\
+	& \mbox{the last class is 1 - the sum of the other probabilities:} \\
+	P(Y=y_R | X ) &=  \frac{1}{1 + \sum_{j=1}^{R-1} \exp(w_{j0} + \sum_{i=1}^n w_{ji}X_i)} 
+\end{align*}
+Note: features can be discrete or discontinuous. 
 
+\subsubsection{Gaussian Naive Bayes vs Logistic Regression.}
+Gaussian Naive Bayes with class-independent variances is representationally equivalent to Linear Regression.
+("If you do have an infinite number of training examples, the GNB and LR produce identical classifiers.")  % Erick 2/7
+The solutions different because of the objective (loss) function.  \hfill \\
 
-Andrew Ng: \hfill \\
+If you do have class-independent variances and the underlying model is gaussian, GNB does better than LR.
+You get an incorrect model for GNB if you don't have class-independent variances.  %Erick
+LR is less biased because it does not assume conditional independence.  % Erick.
+ \hfill \\  \hfill \\
+
+You could use either to learn $ f: X \rightarrow Y$ for $X$ that is a vector of real-valued features ($< X_1, \dots, X_n >$) and boolean Y. \hfill \\ \hfill \\
+
+The two approaches make different assumptions:   \hfill \\
+\begin{itemize}
+	\item NB assumes features are independent given the class.  This is an assumption on $P(\bm{X} | Y)$.
+	\item LR assumes functional form of $P(Y|\bm{X})$, and makes no assumption on $P(\bm{X} | Y)$.
+\end{itemize}
+
+Gaussian Naive Bayes classifier would assume: \hfill \\
+\begin{itemize}
+	\item all $X_i$ are conditionally independent given Y.  
+		If you fix what hump you are looking at, you don't need to worry about the rest of the parameters. 
+	\item model $P(X_i | Y = y_k)$ as Gaussian with $N(\mu_{ik}, \sigma_i)$.  (Your inputs are each produced by a gaussian.)
+	\item model $P(Y)$ as Bernoulli$(\theta, 1-\theta)$
+\end{itemize} 
+This implies the form of $P(Y|X)$ is:
+$\displaystyle P(Y=1 | X= < X_1, \dots, X_n >) = \frac{1}{1 + \exp(w_0 + \sum_i w_i X_i)}$. \hfill \\
+In the slides, he derives the form.   \hfill \\
+(??)  You see that if you assume Gaussian in Logistic Regression, you get: \hfill \\
+ $w_0 = \ln \frac{1 - \theta}{\theta} + \frac{\mu_{i0}^2 + \mu_{i1}^2}{2 \sigma_i^2}$ and $w_i = \frac{\mu_{i0} + \mu_{i1}}{\sigma_i^2}$
+ 
+ His confusing summary: \hfill \\
+ \includegraphics[width=2.5in]{figures/GNB_vs_LR.pdf}
+ Attempted translation: 
+ 
+ Note: you need more parameters to train Naive Bayes. \hfill \\
+ $4n + 1$ parameters for GNB,  $n + 1$ parameters for Logistic Regression. \hfill \\
+ The NB parameter estimates are uncoupled, so there are more of them.   \hfill \\
+ (The Logistic Regression parameter estimates \underline{are} coupled.)
+
+If you don't have infinite data (? "non-asymptotic analysis"): \hfill \\
+For $n$ attributes in $X$, NB needs $O(\log n)$ samples to converge and Logistic Regression needs $O(n)$.  
+So GNB converges more quickly to its (perhaps less helpful) "asymptotic estimates."
+
+You have to do all of the optimization at once, all together if you are doing logistic regression.  ???
+Easier in a certain sense to fit a Gaussian model. 
+Typically we have a lot of data, and that data is not gaussian so Logistic Regression is probably better. 
+
+\subsubsection{Andrew Ng}
 * gives numbers between 0 and 1 (good for classification)   \hfill \\
 * called "logistic regression" but it is really for classification.  (don't be confused by "regression") \hfill \\
 * "sigmoid function" and "logistic function" are essentially synonomous.  \hfill \\
