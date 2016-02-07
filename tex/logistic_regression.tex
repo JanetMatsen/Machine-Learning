@@ -273,24 +273,37 @@ You could use this policy: let $\nu$ be big at the beginning of a loop counter.
 
 
 \subsubsection{Overfitting in Logistic Regression}
-
  
  \underline{Intro \#1:}  \hfill \\
 Be weary of large parameters.  % Audio wk 5
-	Large parameters (large $a$ in $\frac{1}{1 + exp(-a)}$) lead to a step function.  
+	Large parameters (large $a$ in $\frac{1}{1 + \exp(-a)}$) lead to a step function.  
 	That's ok if you truly want a step, but you should be concerned about overfitting the minute you see a large parameter.
 	We could regularize again: apply a penalty for large parameters. 
-    	Could do something like maximizing $w^* = \argmax_w l(w) - \lambda*(||w||_2^2)$ insead of $w* =  argmax_w l(w)$. 
-	But that's not ideal.  Might have a hard time optimizing value of \_\_\_.  \hfill \\
+    	Could do something like maximizing $w^* = \argmax_w l(w) - \lambda*(||w||_2^2)$ instead of $w* =  \argmax_w l(w)$. 
+	But that's not ideal.  Might have a hard time finding a suitable value for $\lambda$.  \hfill \\
+	
 	
 Instead, use a probabilistic way of regularization.
-	We've done this before using a prior.  Instead of MLE, we did MAP. The prior regularizes. 
-	What would be the form of our prior be? 
-	$P(Y|X,w)P(w)$ ??.
-	
-How did we write that eqiaton down?  Write sigmoid shape.  Write as a parametric function w/ parameter w. 
-Whenever we pick a form for that $P(Y|X,w)P(w)$, we need to be careful with the form we do for that $P(w)$ b/c we want to take a derivative. 
-What is the form of $P(Y|X,w)$?  Is of form $e^{something}$
+	We've done this before using a prior.  
+	Instead of MLE, we did MAP. The prior regularizes. 
+	$P(w | Y, X) \propto P(Y | X,w)P(w)$.
+	What would be the form of our prior ($P(w)$) be? 
+	We want the posterior to be differentiable.  
+	The likelihood was a sigmoid shape, so the log likelihood had the form of was of the form $e^{something}$.
+	We already  know how to get the conditional likelihood in the form of $e^{blah}$.
+	Well behaved summation of terms.   \hfill \\
+
+We pick a gaussian distribution for the prior for mathematical convenience.
+	We wanted to form a function we can optimize.
+	If it doesn't come from gaussian and does come from multinomial, what happens? 
+	We wouldn't be too wrong.  And it is just a regularization.  
+	We are just trying to constrain $\bm{w}$ with something that is mathematically well behaved.
+	Usually the prior is off. But it is only there to keep w from getting too big.  It gives a low score when w is too big.   \hfill \\
+
+Q from student: why aren't we considering $P(X,W)$ as the prior? Why $P(Y|X, w)$?
+	P(X,W) is discriminative.  
+	We aren't reformulating our problem.  Just looking to estimate the parameters. 
+	We want to regularize the parameter not the data (?).    \hfill \\
  
  \underline{Intro \#2:}   \hfill \\
  
@@ -306,21 +319,29 @@ Above was M(Conditional)LE.     \hfill \\
 Recall that the MAP/MLE difference is \_\_\_\_\_\_\_\_\_.  \hfill \\
 Priors on $\bm{w}$ are commonly added for regularization.    \hfill \\
 Helps avoid very large weights and overfitting.    \hfill \\
-$P(\bm{w} | Y, \bm{X}) \propto P(Y, | \bm{X}, \bm{w} ) P(\bm{w} )$  \hfill \\
+$P(\bm{w} | Y, \bm{X}) \propto P(Y | \bm{X}, \bm{w} ) P(\bm{w} )$  \hfill \\
 Use a normal distribution with zero mean and "identity covariance".  (\_\_\_\_):  \hfill \\
 $ \displaystyle  P(\bm{w} ) = \prod_i \frac{1}{\kappa \sqrt{2 \pi}} e^{\frac{-w_i^2}{2 \kappa^2}}$ \hfill \\
+$\kappa^2$ is variance.  \hfill \\
 \hfill \\
 
-MAP estimate: 
+Now we form our MAP estimate: 
 \begin{align*}
 	w* &= \argmax_w \ln[P(\bm{w}) \prod_{j=1}^N P(y^j | x^j, \bm{w})]  \\
 		&= \argmax_w \ln[ \prod_i \frac{1}{\kappa \sqrt{2 \pi}} e^{\frac{-w_i^2}{2 \kappa^2}}   \prod_{j=1}^N P(y^j | x^j, \bm{w})]
 \end{align*}
+
+ Instead of focusing on the stuff after the $\prod$ in the bracket we also have $P(w)$.
+ Our prior, $P(w)$ is $\prod$ fo gaussians.
+ The $\prod(y^j|x^, x_j)$ is called likelihood (???)  
+
 Add $\log P(\bm{w})$ to the objective:
 \begin{align*}
 	\ln P(\bm{w}) & \propto - \frac{\lambda}{2} \sum_i w_i^2 \\
 	\frac{\partial \ln P(\bm{w})}{\partial w_i} &= \lambda w_i
 \end{align*}
+
+We now have a new way of optimizing w.
 This is a quadratic penalty (???) that drives the weights toward zero. \hfill \\
 It adds a negative linear term to the gradients (???).  \hfill \\
 Also applicable in linear regression! 
@@ -337,6 +358,10 @@ Also applicable in linear regression!
 	w* &= \argmax_w \ln[P(\bm{w}) \prod_{j=1}^N P(y^j | x^j, \bm{w})] \\
 	w_i^{(t+1)} & \leftarrow w_i^{(t)} + \eta \{ -\lambda w_i^{(t)} +  \sum_j x_i^j [y^j - \widehat{P}(Y^j = 1 | x^j, \bm{w})]\\
 \end{align*}
+The $\lambda$ term complains when the value is big.
+This $-\lambda$ if from the derivative of the gaussian.
+The whole point: if you add a prior and take a derivative, it is a form of regularization and should act as a penalty on big $w$. 
+
 
 \hfill \\  \hfill \\
 
@@ -351,6 +376,9 @@ Vocab \hfill \\
 Define a weight vector $w_i$ for each $y_i$ where i ranges from $1$ to $R-1$ for $R$ classes.
 You don't need a weight vector for the $R^{th}$ class b/c its probability is 1 - the sum of the rest.  \hfill \\
 \includegraphics[width=1in]{figures/multiclass_logistic.pdf} \hfill \\
+Each category will have its own w values.  \hfill \\ % Wk 5 audio. 
+Don't need to train k w values.  k-1.  b/c they have to sum to 1.    % Wk 5 audio. 
+
 \begin {align*}
 	P(Y=1 | X ) & \propto \exp(w_{10} + \sum_i w_{1i}X_i)  \\
 		& \mbox{note: $\bm{w}$ is now a matrix, not an array.}  \\
@@ -415,8 +443,29 @@ You have to do all of the optimization at once, all together if you are doing lo
 Easier in a certain sense to fit a Gaussian model. 
 Typically we have a lot of data, and that data is not gaussian so Logistic Regression is probably better. 
 
+\subsection{Logistic Regression Protocol}
+Steps:
+\begin{itemize}
+	\item start with given data: x and labels.
+	\item form conditional log likelihood function.
+	\item either optimize that or add a prior
+	\item do hill climbing until you stop seeing big changes in the weights
+	\item then you claim victory
+\end{itemize}
+
+\textbf{For binary classification:} \hfill \\
+The final output of trained regression is the weight vector, $w*$.
+It is d+1 dimensional for a d-dimensional feature vector.  The +1 is for bias (that coefficient is 1).  \hfill \\
+
+\underline{How do you use it?}  \hfill \\
+You found the form of decision boundary was $P(Y=1|X,w) = exp()/(1+ exp())$.
+Put in the $x$ with the $w$.  
+Compute the probability of Y=0 and Y=1, pick the biggest result. 
+How do you know if your weights are good? 
+Test on held-out data (NOT the test data). 
+
 \subsubsection{Andrew Ng}
 * gives numbers between 0 and 1 (good for classification)   \hfill \\
 * called "logistic regression" but it is really for classification.  (don't be confused by "regression") \hfill \\
-* "sigmoid function" and "logistic function" are essentially synonomous.  \hfill \\
+* "sigmoid function" and "logistic function" are essentially synonymous.  \hfill \\
  
