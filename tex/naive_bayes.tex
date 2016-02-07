@@ -1,6 +1,13 @@
-\smallskip \hrule height 2pt \smallskip
 \section{Naive Bayes}
 \smallskip \hrule height 2pt \smallskip
+Train on Y conditioned on x. \hfill \\  % Friday wk 4 audio transcription.
+Bayes: $P(Y=X) \propto P(X|Y)P(Y)$.  
+But that is ($2^N$) parameters, and you might not be able to make a model with that many ($N$) parameters if your training data has a lot of features.
+So you can add some assumptions that take you from $2^N$ parameters down to $2N$ of them. \hfill \\  % Friday wk 4 audio transcription.
+
+Study the problem feature by feature.  Assume chunks of features are conditionally independent.  This is a false assumption, but often works.  
+(Features are probably not independent, but it turns out to be reasonably safe to assume so.)
+MAP is the foundation for Naive Bayes classifiers.  % http://www.cs.cmu.edu/~tom/10601_sp08/slides/recitation-mle-nb.pdf
 
 Vocabulary
 \begin{itemize}
@@ -104,7 +111,7 @@ Pretend you saw every outcome $k$ extra times: \hfill \\
 $\displaystyle P_{LAP, k}(x) = \frac{c(x) + k}{N + k|X|}$ \hfill \\
 $N = $ number of observations.  \hfill \\
 $|X| = $ the number of categories you are counting.  \hfill \\
-$k$ is the strength of the prior.  \hfill \\  \hfill \\
+$k$ is the strength of the prior; how much of the prior information you are going to enforce\hfill \\  \hfill \\
 
 Example: 
 $\displaystyle P_{LAP, 0}(X) = \langle \frac{2}{3}, \frac{1}{3} \rangle$.  \hfill \\
@@ -130,6 +137,8 @@ Zero probabilities kill that class' chance at being called. \hfill \\
 
 \subsubsection{NB for text classification}
 \begin{itemize}
+	\item Need a feature vector with a suitably small number of features.
+		Bag of words model is commonly used. 
 	\item $i$ is the $i^{th}$ word
 	\item NB assumption(\_\_\_) helps a lot.  
 		$P(X_i=x_i |Y=y)$ is just the probability of observing word $x_i$ in a document on topic $y$.  
@@ -157,12 +166,13 @@ Zero probabilities kill that class' chance at being called. \hfill \\
 	\item $j$ is $j^{th}$ training example.  
 	\item $\delta(x) = 1$ if x true, else 0. 
 	\item $h$: the function that returns the best class.  % Erick 2/4/2016
-	\item in plain english, \_\_\_\_\_\_ 
 \end{itemize}
 
 
 Example: character recognition where the darkness of each pixel is continuous.  \hfill \\
-\textbf{Gausian Naive Bayes (GNB)}: 
+\subsection{Gausian Naive Bayes (GNB) for continuous features}
+Naive Bayes continuous video:  \url{https://www.youtube.com/watch?v=r1in0YNetG8}
+
 	$ \displaystyle P(X_i = x | Y = y_k) = \frac{1}{\sigma_{ik} \sqrt{2 \pi}} e^\frac{-(x- \mu_{ik})^2}{2 \sigma_{ik}^2}$  \hfill \\
 \begin{itemize}
 	\item $\mu_{ik}$ is the mean of the values for the $i^{th}$ feature for the $k^{th}$ class. \hfill \\
@@ -193,8 +203,9 @@ Estimating parameters for discrete $Y$ and continuous $X_i$:  \hfill \\
 				compared to the mean for that pixel and label. 
 		\end{itemize}
 \end{itemize}
+We don't need to use a Gaussian for the prior, $P(y)$.  We aren't optimizing over it, so it is safe to count.  % audio week 5 
 
-\subsubsection{When Bayes Classifier is Optimal:}
+\subsection{When Bayes Classifier is Optimal:}
 In Bayes we are learning the function $h$ that produces labels $Y$ based on inputs $\bm{X}$.  
 More formally: \hfill \\
 $h : \bm{X} \mapsto Y$, or \hfill \\
@@ -237,10 +248,3 @@ Different notation: delta has a comma in the parentheses and not an equality.   
 Proof in words:  ??? 
 
 Aside: note that for one classification y is not a vector.  It is a point. 
-
-
-
-\subsubsection{Misc NB}
-
-Naive Bayes continuous video: 
-\url{https://www.youtube.com/watch?v=r1in0YNetG8}

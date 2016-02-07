@@ -1,7 +1,19 @@
 \section{Logistic Regression}
 \smallskip \hrule height 2pt \smallskip
 
-Another probabilistic approach to classification (categorical predictions).   \hfill \\
+Another probabilistic approach to classification (categorical predictions).  
+ \hfill \\
+Discriminative: learn $P(Y|X)$ directly then discriminate between classes.    % Week 5 audio. 
+We solved similar problems using Bayes before (a generative approach).  
+	But if we don't want to bother with modeling all those joint or conditional probabilities, we can do this discriminative approach instead. \hfill \\  %Wed 2/3 audio transcription.
+
+Logistic Regression is the discriminative counterpart to a Naive Bayes generative classifier over Boolean features.  % https://www.cs.cmu.edu/~tom/mlbook/NBayesLogReg.pdf
+The difference between logistic and Naive Bayes is just one word: "conditional".   % wk 5 audio
+We are maximizing conditional log likelihood, that is conditional on X.  
+	We are not going to spend our time encoding the distribution over X.   % wk 5 audio
+
+\hfill \\   \hfill \\
+
 Can use discrete or continuous outputs. \hfill \\ % https://www.youtube.com/watch?v=zAULhNrnuL4
 It's a linear classifier; the decision rule is a hyperplane. \hfill \\  % Slide 6 summary
 You optimize it (find weights) by gradient ascent, which works because it is concave.    \hfill \\  % Slide 6 summary
@@ -125,6 +137,8 @@ Discriminative models cann't compute $P(\bm{x}^j | \bm{w})$!  ???
 \hfill \\
 
 \subsubsection{Conditional Log Likelihood}
+Just need to figure out how to go up and find the maximum likelihood. 
+
 (the binary case only).  \hfill \\
 $P(Y=0 | \bm{X}, \bm{w}) = \frac{1}{1 + \exp(w_0 + \sum_i w_i X_i)}$  \hfill \\
 $P(Y=1 | \bm{X}, \bm{w}) = \frac{\exp(w_0 + \sum_i w_i X_i)}{1 + \exp(w_0 + \sum_i w_i X_i)}$  \hfill \\
@@ -140,10 +154,17 @@ $P(Y=1 | \bm{X}, \bm{w}) = \frac{\exp(w_0 + \sum_i w_i X_i)}{1 + \exp(w_0 + \sum
 \end{align*}	
 
 While we can't find a closed-form solution to optimize $l(\bm{w})$,  $l(\bm{w})$ is concave so we can to gradient \underline{as}cent. 
+Jsut need to figure out how to go up and find the maximum likelihood.   % Wk 5 audio
 
 \subsubsection{Gradent ascent to optimize w}
+To maximize, we can't take derivative w.r.t $\bm{w}$ and optimize b/c no closed form solution.  % Wk 5 audio 
+Instead we form the gradient vector and move along the gradient. % Wk 5 audio
 Conditional likelihood for Logistic Regression is convex.  (see above)  \hfill \\
-\textbf{Gradient}:  \hfill \\
+In this case it doesn't matter b/c we have a concave function.  % Wk 5 audio
+Iterate to find $\bm{w}$: start somewhere, find gradient direction, make step in that direction, repeat, repeat.
+\hfill \\
+
+\textbf{Gradient}:  gives ascent or descent direction. \hfill \\
 \begin{align*}
 	\nabla_w l(\bm{w}) = [\frac{\partial l(\bm{w})}{\partial w_0}, \dots, \frac{\partial l(\bm{w})}{\partial w_n}]'  \hfill \\
 \end{align*}
@@ -152,7 +173,9 @@ Conditional likelihood for Logistic Regression is convex.  (see above)  \hfill \
 \begin{align*}
 	\Delta \bm{w} &= \eta \nabla_{\bm{w}} l(\bm{w})
 \end{align*}
-$\eta$ is the learning rate.  $\eta > 0$.
+$\eta$ is the learning rate.  $\eta > 0$.  
+	It can't be too big or you can get lost.  
+	It can't be too small or you take forever to converge. 
 
 Your next weights $(t+1)$ become: 
 $w_i^{(t+1)} \leftarrow w_i^{(t)} + \eta \frac{\partial l(\bm{w})}{\partial w_i}$   \hfill \\
@@ -165,10 +188,13 @@ $\displaystyle \frac{\partial l(w)}{\partial w_i} = \sum_j x_i^j (y^j - P(Y^j = 
 
 \subsubsection{Example of gradient ascent to maximize conditional log likelihood}
 (M(C)LE; C for conditional) \hfill
+Learning an approximation of the step function.  % Wk 5 audio. 
+
 Use the equations: \hfill \\
 \begin{itemize}
 	\item \textbf{eq 1:} $w_i^{(t+1)} \leftarrow w_i^{(t)} + \eta \frac{\partial l(\bm{w})}{\partial w_i}$
 	\item \textbf{eq 2:} $\displaystyle \frac{\partial l(w)}{\partial w_i} = \sum_j x_i^j (y^j - P(Y^j = 1 | x^j, w))$
+			 The loss function is conditional on log likelihood.  % Wk 5 audio
 	\item \textbf{eq 3:} $P(Y=1 | X, W) = \frac{\exp(w_0 + \sum_i w_i X_i)}{1 + \exp(w_0 + \sum_i w_i X_i)}$
 	\item \textit{note:} superscript is for the $j^{th}$ data point and 
 			subscripts are for the $i^{th}$ value of the input ($x$) array.  
@@ -227,8 +253,48 @@ You don't have to get all the info to update all the weights at once.
 Do them one at a time.  \hfill \\
 \includegraphics[width=2.5in]{figures/gradient_descent_algorthim.pdf}
 
+\underline{How do you decide when to stop?} \hfill \\
+(Not in notes!) \hfill \\
+
+You need a criteria that tells you when to stop updating your gradient. 
+	Use a threshold for magnitude of the gradient. 
+	When the amount of change is small it is not changing a lot.  If concave, you are close to global optima. 
+
+Why don't we wait until it gets to zero? 
+	The chances of us hitting zero is low, and we might spend a lot of time wasting CPU cycles on negligible changes. 
+	
+When we are really far from the global optimum we can afford to take bigger steps. 
+	Think about the objective function.  We can afford to make big steps if we are far.  
+	If we make big steps when close, we can get farther away .
+
+You could use this policy: let $\nu$ be big at the beginning of a loop counter. 
+	Increase the value until you see a drop.
+	"Line search" asks "what is maximum value of this parameter that gives you no drop?"  
+
+
 \subsubsection{Overfitting in Logistic Regression}
-Like in \_\_\_\_\_\_\_\_, the maximum likelihood solution prefers higher weights.  
+
+ 
+ \underline{Intro \#1:}  \hfill \\
+Be weary of large parameters.  % Audio wk 5
+	Large parameters (large $a$ in $\frac{1}{1 + exp(-a)}$) lead to a step function.  
+	That's ok if you truly want a step, but you should be concerned about overfitting the minute you see a large parameter.
+	We could regularize again: apply a penalty for large parameters. 
+    	Could do something like maximizing $w^* = \argmax_w l(w) - \lambda*(||w||_2^2)$ insead of $w* =  argmax_w l(w)$. 
+	But that's not ideal.  Might have a hard time optimizing value of \_\_\_.  \hfill \\
+	
+Instead, use a probabilistic way of regularization.
+	We've done this before using a prior.  Instead of MLE, we did MAP. The prior regularizes. 
+	What would be the form of our prior be? 
+	$P(Y|X,w)P(w)$ ??.
+	
+How did we write that eqiaton down?  Write sigmoid shape.  Write as a parametric function w/ parameter w. 
+Whenever we pick a form for that $P(Y|X,w)P(w)$, we need to be careful with the form we do for that $P(w)$ b/c we want to take a derivative. 
+What is the form of $P(Y|X,w)$?  Is of form $e^{something}$
+ 
+ \underline{Intro \#2:}   \hfill \\
+ 
+Like in linear regression, the maximum likelihood solution prefers higher weights.  
 Higher weights can give higher likelihood of properly classifying examples close to the decision boundary.  
 This over-fitting causes features to have larger influences on the decision:  \textbf{beware of overfitting!!!}. 
 Again, you can use regularization to penalize high weights.
