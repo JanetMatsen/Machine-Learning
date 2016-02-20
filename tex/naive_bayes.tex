@@ -1,5 +1,6 @@
 \section{Naive Bayes}
 \smallskip \hrule height 2pt \smallskip
+Parameters are from data stistics; probabilistic interpretation.  \hfill \\ % lec 7 end
 Train on Y conditioned on x. \hfill \\  % Friday wk 4 audio transcription.
 Bayes: $P(Y=X) \propto P(X|Y)P(Y)$.  
 But that is ($2^N$) parameters, and you might not be able to make a model with that many ($N$) parameters if your training data has a lot of features.
@@ -12,18 +13,15 @@ MAP is the foundation for Naive Bayes classifiers.  % http://www.cs.cmu.edu/~tom
 Vocabulary
 \begin{itemize}
 	\item \textbf{$h_{NB}(x)$} the function that returns the best class.  %Erick 2/4/2016
-
-	\item \textbf{.}
-	\item \textbf{.}
-	\item \textbf{.}
 \end{itemize}
 
 Advantages:
 \begin{itemize}
-	\item Fast to train (single scan). Fast to classify  % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
+	\item Fast to train (single scan/pass through data). Fast to classify  % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
 	\item Not sensitive to irrelevant features  % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
 	\item Handles real and discrete data   % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
 	\item Handles streaming data well   % http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf
+	\item conditional independence assumption $\rightarrow$ we don't need to see occurrences of joint assignments to estimate their probabilities.  % HW 2 forum
 \end{itemize}
 Disadvantages:
 \begin{itemize}
@@ -48,6 +46,11 @@ Equivalent to P(X, Y $|$ Z) = P(X $|$ Z) P(Y $|$ Z)  \hfill \\ \hfill \\
 
 TODO: put in plain english. 
 
+HW 2 forum: \hfill 
+Naive Bayes assumption (is): \hfill \\
+$P(D1, D2|H) = P(D1|H)P(D2|H)$, everything else follows from the rules of probability.
+
+
 \subsubsection{Naive Bayes Assumption}
 Features are independent given the class: \hfill \\
 \begin{align*}
@@ -61,6 +64,41 @@ This reduces the number of parameters a lot!
 Say you had 5 features.  
 Before this assumption, each of your 5 features could be dependent.   Then you have to assign a probability to each state.  If each is binary, then you can say $2^5$.  
 After this assumption, you would just have 5 parameters.   \hfill\\ \hfill \\
+
+\subsubsection{Homework clarifications}
+\underline{Homework 2 TA notes:}  \hfill \\
+Naive Bayes gives us a way to compute the whole joint distribution P(Cold, Headache, Cough, SoreThroat). Once we have this, everything else follows from the sum/chain rules of probability:
+
+From the definition of conditional probability (which is the chain rule in disguise):
+P(Cold | notHeadache, Cough, SoreThroat) = P(Cold, not Headache, Cough, SoreThroat)/P(not Headache, Cough, Sore Throat)
+
+From the sum rule we see that the denominator is:
+P(not Headache, Cough, SoreThroat) = P(Cold, not Headache, Cough, SoreThroat) + P(not Cold, not Headache, Cough, SoreThroat)
+
+Thus the entire conditional probability can be computed using the joint distribution (which can be computed from the factorization and the estimates from the dataset).
+
+The reason we want to include the denominator is to make sure that P(not Headache, Cough, SoreThroat) is non-zero (as asked in another post). It's not zero here, but if it was that would mean we can't really ask about the prediction P(Cold | not Headache, Cough, SoreThroat), since this is only defined when P(not Headache, Cough, SoreThroat) is non-zero. In practice people just assume this isn't an issue, and directly maximize the joint probability.
+
+\hfill \\
+The point of Naive Bayes isn't that $P(H| D1, D2)$ is proportional to $P(H, D1, D2)$, as this is true for any distribution (Here Di are the data, H is the hypothesis for some arbitrary problem). The point is that we assume the conditional independence $P(D1, D2| H)$ is $P(D1|H) P(D2|H)$. No the denominator is not used in practice, but that's a simplifying assumption that only works if none of your conditional probabilities are zero (which in turn means all joint probabilities are nonzero). Using the denominator doesn't defeat the point of Naive Bayes, it just ensures that $P(Cold | not Headache, Cough, SoreThroat)$ is well defined as explained above. \hfill \\
+
+You should be using the conditional independence assumption from Naive Bayes to compute the joint probabilities in the numerator/denominator: e.g. $P(H, D1, D2) = P(H)*P(D1|H)*P(D2|H)$, where $P(H)$, $P(D1|H)$, $P(D2|H)$ are estimated from the data (with or without Laplacian smoothing). The conditional independence assumption means that we don't estimate $P(D1 = True, D2 = False | H)$ from the number of times we see $(D1= True, D2=False)$ together, we split $P(D1=True, D2=False|H)$ into $P(D1=True|H)*P(D2=False|H)$ and estimate each conditional independently. This is a huge simplification, since if we have N binary variables, we would need to see $2^N$ combinations to see all of the joint assignments (D1,...DN).
+\hfill \\ \hfill \\
+
+[Cold] is not independent of [Headache], [Cough], or [SoreThroat]. Consider: if [Cold] were in fact not related to these variables, we wouldn't be predicting [Cold] from them. Furthermore, [Cough] and [Headache] are not independent, since both are not independent of [Cold]. However, the Naive Bayes assumption is that once you account for that dependence, [Cough] and [Headache] are independent.
+
+Here's a common-sense description of this. If you go around talking to people, you notice that some have headaches, and some have colds. At first, you are confused and wonder why this might be. Is it, perhaps, that coughing all the time is so annoying that it eventually causes people headaches? But then you realize that there is a common illness, the cold, that causes both headaches and coughs. Aha! you say. So you start asking people not only if they have a headache and a cough, but also whether or not they have a cold. You find that among people with colds, having a headache and having a cough seem like unrelated phenomena. And among people without colds, headaches and colds are again unrelated. This is the world that Naive Bayes assumes.
+
+You ask "Would it be the case then that P(Cd, H, C, S) = P(H, C, S | Cd) P(Cd) ?" Yes. That fact is the definition of conditional probability, and it is a basic fact of probabilities. It is true for all variables, in all situations, no matter what assumptions you make. It is true whether Cd and H are independent or not, whether they represent colds or aliens or whatever. You can always use this fact about any variables. \hfill \\
+-------------
+
+Naive Bayes is not about ignoring the denominator. This seems to have been a common misunderstanding.
+
+Naive Bayes is an independence assumption; namely, that your input features are independent given the output feature.
+
+This assumption allows you to estimate probabilities like P(X, Y, Z) in terms of other probabilities P(X, Y) and P(X, Z). Since it relates probabilities to each other, it makes it easier to estimate probabilities from samples. For example, if you are trying to detect if a message is spam, you want to compute P(spam | Hello, I, am, Prince, Albert, of, Nigeria, ...), and you may have never seen any points with text (Hello, I, am, Prince, Albert, of, Nigeria, ...) and so would not have any estimate of the probability that that message is spam. With Naive Bayes, you would rewrite this to in terms of the probabilities P(spam | Hello) and P(spam | I) and P(spam | am) and ..., all of which you can compute because you have seen many messages with the words "Hello", or "Prince", or "Nigeria", and know the associated probabilities of spam.
+
+This question asks you to use the Naive Bayes assumption to estimate a probability value given some data, which is exactly what you use Naive Bayes for.
 
 \subsubsection{Naive Bayes Classifier}
 Given:

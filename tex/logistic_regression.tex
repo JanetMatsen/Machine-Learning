@@ -1,11 +1,14 @@
 \section{Logistic Regression}
 \smallskip \hrule height 2pt \smallskip
 
-Another probabilistic approach to classification (categorical predictions).  
- \hfill \\
-Discriminative: learn $P(Y|X)$ directly then discriminate between classes.    % Week 5 audio. 
-We solved similar problems using Bayes before (a generative approach).  
+\begin{itemize}
+	\item Another probabilistic approach to classification (categorical predictions).  \hfill \\
+	\item Discriminative: learn $P(Y|X)$ directly then discriminate between classes.    % Week 5 audio. 
+		We solved similar problems using Bayes before (a generative approach).  
 	But if we don't want to bother with modeling all those joint or conditional probabilities, we can do this discriminative approach instead. \hfill \\  %Wed 2/3 audio transcription.
+	\item Parameters from gradient ascent % End of slide set 7
+	\item Linear, uses a probabilistic model, and is discriminative.% End of slide set 7
+\end{itemize}
 
 Logistic Regression is the discriminative counterpart to a Naive Bayes generative classifier over Boolean features.  % https://www.cs.cmu.edu/~tom/mlbook/NBayesLogReg.pdf
 The difference between logistic and Naive Bayes is just one word: "conditional".   % wk 5 audio
@@ -207,7 +210,7 @@ Use the equations: \hfill \\
 		\begin{itemize}
 			\item For j = 0:  
 				\begin{align*}
-					P(Y^0 = 1 | x^0, w) &= \frac{\exp(0 + 0*3 + 0^(-3))}{(1 +  \exp(0 + 0*3 + 0*(-3)))} \\
+					P(Y^0 = 1 | x^0, w) &= \frac{\exp(0 + 0*3 + 0*(-3))}{(1 +  \exp(0 + 0*3 + 0*(-3)))} \\
 						&= 1/(1+1) = 1/2
 				\end{align*}
 			\item For j = 1:  

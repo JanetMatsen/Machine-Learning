@@ -8,6 +8,9 @@
 	\item \textbf{hypothesis space}: ?  E.g. binomial distribution for coin flip.  	
  	\item \textbf{prediction error}: measure of fit (?) 
 	\item \textbf{regularization}: a process of introducing additional information in order to solve an ill-posed problem or to prevent overfitting  % https://en.wikipedia.org/wiki/Regularization_(mathematics)
+	\item \textbf{L1} norm
+	\item \textbf{L2} norm
+	\item \textbf{convergence} - if you add more data and you don't get different parameters, the model has converged. 
 	\item \textbf{kernel}: some transformation of your features that improves your classification %Erick 1/30/2015
 	%\item \textbf{}
  \end{itemize}
@@ -98,18 +101,48 @@ Two big categories of approaches for ML: \hfill \\
 		Bayes classification is an example.    
 		Naive Bayes is one that can produce p(Data,Zebra), except you've made a lot of assumptions.   \hfill \\  % Wed Wk 5 transcript
 		P(Data,Zebra) is a pdf over samples. 
-		If you didn't relax all the constraints when going from Bayes to Naive Bayes, you could paint a zebra. 
+		If you didn't relax all the constraints when going from Bayes to Naive Bayes, you could paint a zebra.   \hfill \\
+		A joint probability model with evidence variable.   \hfill \\  % Lec 7: preceptrons
  \hfill \\
 \underline{Discriminative}:
+		No generative model, no Bayes rule, often no probabilities at all!   \hfill \\  % Preceprtons (Lec 7)
 		Those that directly estimate the decision boundary.  "discriminative decision boundary".  Find $P(Y|X)$ \hfill \\
 		Describing how to generate random instances X conditioned on the target attribute Y.  \hfill \\
-		 The discriminative classifier is like a lazy painter.  \hfill \\  % Wed Wk 5 transcript
-		 You can get decision boundary out of a generative model but it is over-kill if you only want to produce a label.  \hfill \\  % Wed Wk 5 transcript
+		The discriminative classifier is like a lazy painter.  \hfill \\  % Wed Wk 5 transcript
+		You can get decision boundary out of a generative model but it is over-kill if you only want to produce a label.  \hfill \\  % Wed Wk 5 transcript
 		 85\% of time discriminative outperforms.  B/c p(Data,Zebra) is hard to estimate.  \hfill \\  % Wed Wk 5 transcript
+		 
 		 
 \includegraphics[width=2.5in]{figures/zebra_painting.pdf}
 Why does the generative p graph max out at 0.1 and the discriminative at 1?   
     Discriminating against zebra or not zebra.  Has to sum to 1.  
     The discriminative doesn't have to sum to 1.  Many other things have to sum with it to sum to 1. 
+    
+ 
+ \subsection{Linear Classifiers}
+ Inputs are feature values.  \hfill \\
+ Each feature has a weight.  \hfill \\
+ Sum is the activation.  activation$_w(x) = \sum_i w_i x_i = w \cdot x$  \hfill \\
+ If the activation is positive, chose output class 1.  \hfill \\
+ If the activation is netative, chose output class 2.  \hfill \\
+ 
+ \includegraphics[width=1.5in]{figures/linear_classifier_cartoon.pdf}  \hfill \\
+ 
+ For a binary decision rule:   \hfill \\
+ In the space of feature vectors: 
+ \begin{itemize}
+ 	\item examples are points
+	\item any weight vector is a hyperplane
+	\item one side corresponds to y = +1
+	\item the other side corresponds to y = -1
+	\item ??? The $w \cdot x = 0$ is the solution to the line.
+ \end{itemize}
+ 
+ \includegraphics[width=1.5in]{figures/binary_decision_rule.pdf}
+ 
+ \subsection{NB, LR, Perceptron}
+\includegraphics[width=2.5in]{figures/three_views_of_classification.pdf}
+ 
+
 		
 
