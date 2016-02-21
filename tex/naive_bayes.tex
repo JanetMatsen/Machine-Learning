@@ -9,6 +9,11 @@ So you can add some assumptions that take you from $2^N$ parameters down to $2N$
 Study the problem feature by feature.  Assume chunks of features are conditionally independent.  This is a false assumption, but often works.  
 (Features are probably not independent, but it turns out to be reasonably safe to assume so.)
 MAP is the foundation for Naive Bayes classifiers.  % http://www.cs.cmu.edu/~tom/10601_sp08/slides/recitation-mle-nb.pdf
+ \hfill \\
+  \hfill \\
+Do we do optimization with NB?  
+No.  We start with the joint distribution: $P(x|y)*prior$, $\dots$, take the max.  % week 6 audio
+    Not ML optimizing.  Not required to optimize every time we learn something. % week 6 audio
 
 Vocabulary
 \begin{itemize}
@@ -209,6 +214,12 @@ Zero probabilities kill that class' chance at being called. \hfill \\
 
 Example: character recognition where the darkness of each pixel is continuous.  \hfill \\
 \subsection{Gausian Naive Bayes (GNB) for continuous features}
+
+Find parameter that makes all the data points most likely.
+What parameters explain our data best?  \hfill \\
+ \hfill \\
+
+
 Naive Bayes continuous video:  \url{https://www.youtube.com/watch?v=r1in0YNetG8}
 
 	$ \displaystyle P(X_i = x | Y = y_k) = \frac{1}{\sigma_{ik} \sqrt{2 \pi}} e^\frac{-(x- \mu_{ik})^2}{2 \sigma_{ik}^2}$  \hfill \\

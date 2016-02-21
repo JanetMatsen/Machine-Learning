@@ -8,14 +8,19 @@
 	But if we don't want to bother with modeling all those joint or conditional probabilities, we can do this discriminative approach instead. \hfill \\  %Wed 2/3 audio transcription.
 	\item Parameters from gradient ascent % End of slide set 7
 	\item Linear, uses a probabilistic model, and is discriminative.% End of slide set 7
+	\item produces weights, $w^*$ of dim n + 1 (n = number of features in each training point).
+		These parameters are tied together, unlike in Naive Bayes where there is independence for parameters for different classes. 
+	\item Use the dot product of those weights against the feature vectors as an input to the sigmoid function.
 \end{itemize}
 
 Logistic Regression is the discriminative counterpart to a Naive Bayes generative classifier over Boolean features.  % https://www.cs.cmu.edu/~tom/mlbook/NBayesLogReg.pdf
 The difference between logistic and Naive Bayes is just one word: "conditional".   % wk 5 audio
 We are maximizing conditional log likelihood, that is conditional on X.  
 	We are not going to spend our time encoding the distribution over X.   % wk 5 audio
+\hfill \\   
 
-\hfill \\   \hfill \\
+Parameters are tied together, unlike in Naive Bayes.  % audio week 6
+\hfill \\
 
 Can use discrete or continuous outputs. \hfill \\ % https://www.youtube.com/watch?v=zAULhNrnuL4
 It's a linear classifier; the decision rule is a hyperplane. \hfill \\  % Slide 6 summary
@@ -397,15 +402,23 @@ After normalizing, your probabilities become:
 	P(Y=y_R | X ) &=  \frac{1}{1 + \sum_{j=1}^{R-1} \exp(w_{j0} + \sum_{i=1}^n w_{ji}X_i)} 
 \end{align*}
 Note: features can be discrete or discontinuous. 
+\hfill \\  \hfill \\
 
 \subsubsection{Gaussian Naive Bayes vs Logistic Regression.}
 Gaussian Naive Bayes with class-independent variances is representationally equivalent to Linear Regression.
 ("If you do have an infinite number of training examples, the GNB and LR produce identical classifiers.")  % Erick 2/7
 The solutions different because of the objective (loss) function.  \hfill \\
+\hfill \\
 
 If you do have class-independent variances and the underlying model is gaussian, GNB does better than LR.
 You get an incorrect model for GNB if you don't have class-independent variances.  %Erick
 LR is less biased because it does not assume conditional independence.  % Erick.
+\hfill \\
+
+If you have enough categories, GNB w/ class independence will produce identical results to LR.  % week 6 audio
+Given enough points \& the assumption features independence of class is held true, GNB will do better. 
+If these assumptions are *not* true then LR will do better.
+
  \hfill \\  \hfill \\
 
 You could use either to learn $ f: X \rightarrow Y$ for $X$ that is a vector of real-valued features ($< X_1, \dots, X_n >$) and boolean Y. \hfill \\ \hfill \\
@@ -445,6 +458,48 @@ So GNB converges more quickly to its (perhaps less helpful) "asymptotic estimate
 You have to do all of the optimization at once, all together if you are doing logistic regression.  ???
 Easier in a certain sense to fit a Gaussian model. 
 Typically we have a lot of data, and that data is not gaussian so Logistic Regression is probably better. 
+\hfill \\
+
+\subsubsection{More notes from class}  % week 6 audio
+Logistic regression makes no assumption about $P(X|Y)$.  
+Naive Bayes assumed independence of parameters, conditioned on label.
+Optimizing different loss functions.  \hfill \\
+\hfill \\ 
+
+Which is better? 
+Need to know how many parameters each classifier would need. 
+\# of parameters, \# of features? 
+How many parameters does NB need? 
+?? $2cC$ classes. C, d, n.  C classes, d is \# of training examples, n is number of features.
+$4n + 1$ ??.
+For logistic regression, the output was weights, w*.  Dim was n + 1. 
+NB parameters are independent (uncoupled).
+Logistic regression: the parameters are tied together.  \hfill \\
+\hfill \\
+
+\underline{Gen vs Disc. for NB/LR} \hfill \\
+If you have enough categories, GNB w/ class independence will produce identical results:
+Given enough points and the assumption features independence of class is held true
+If this is *not* true then LR will do better (when GNB is false). 
+\textbf{With limiting data, use GNB. }
+GNB may converge faster but to something less true.  \hfill \\
+\hfill \\
+
+Do we do optimization with NB?  No.
+We start w/ joint distribution,  $P(x|y)*prior$, $\dots$, take the max.
+ We are not ML optimizing.  Not required to optimize every time we learn something. 
+\textbf{Both LR and NB are trying to do the same task, and one doesn't require training}. 
+\hfill \\  \hfill \\
+
+NB requires less training examples. 
+\hfill \\  \hfill \\
+
+Use logistic regression by default.  \hfill \\  \hfill \\
+
+Is there a global optimum for LR with regularization?
+No.  But still should be close. 
+If you add a regularization that breaks the concavity of the function, you can't prove anything.
+\hfill \\
 
 \subsection{Logistic Regression Protocol}
 Steps:

@@ -9,10 +9,18 @@
  	\item \textbf{prediction error}: measure of fit (?) 
 	\item \textbf{regularization}: a process of introducing additional information in order to solve an ill-posed problem or to prevent overfitting  % https://en.wikipedia.org/wiki/Regularization_(mathematics)
 	\item \textbf{L1} norm
-	\item \textbf{L2} norm
+	\item \textbf{L2} norm.  Can be used to regularize, or to normalizing features. 
+		\begin{itemize}
+			\item You can do $l_2$ normalization for a feature vector to get a unit vector: 
+				Convert $x$ to $\hat{x}$ so that if you form $||\hat{x}||_2^2 = 1$
+				Can also do $l_1$
+		\end{itemize}
 	\item \textbf{convergence} - if you add more data and you don't get different parameters, the model has converged. 
 	\item \textbf{kernel}: some transformation of your features that improves your classification %Erick 1/30/2015
 	%\item \textbf{}
+	\item \textbf{affine}: indicates that the subspace need not pass through the origin.  % Intro to statistical learning Ch 9.1
+	\item \textbf{support vector}: data points that “support” the maximal margin hyperplane in the sense that if these points were 				moved slightly then the maximal margin hyper- plane would move as well.   % Intro to statistical learning Ch 9.1
+
  \end{itemize}
  
  Concepts:
@@ -21,6 +29,16 @@
 	likelihood*prior = constant*posterior.  $P(Y|X)$ is likelihood, $P(X|Y)$ is posterior.  
 \hfill \\
 \hfill \\
+
+\subsubsection{Normalizing data}
+Options:
+\begin{itemize}
+	\item min/max
+	\item sigmoid
+	\item $L_1$ norm
+	\item $L_2$ norm
+\end{itemize}
+Note $L_1$/$L_2$ normalization versus penalty/regularization!!  
 
 \subsubsection{Size for modeling P$(Y=y | X)$}
 		How many parameters are needed to model $P(y | x_1, x_2, ..., x_d)$?  

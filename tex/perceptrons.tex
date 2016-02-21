@@ -2,15 +2,25 @@
 \smallskip \hrule height 2pt \smallskip
 
 \begin{itemize}
+	\item Decision mechanism: sign of $w \cdot x$.  If + say yes, if - say no.  % week 6 audio
+	\item Linear classifier in feature space.
 	\item Error driven, not probabilistic. \hfill \\
 		\begin{itemize}
 			\item Mistake driven rather than model drive. \hfill \\
 			\item Parameters from reactions to mistakes  % end of slide set 7
 		\end{itemize}
+	\item does better with linearly separable data. 
 	\item Parameters are from a discriminative interpretation % end of slide set 7
 	\item To train, you go through the data until the held-out accuracy maxes out. % end of slide set 7
+	\item  Just moving the plane to satisfy your labels.
+			Then project new sample into this space and see which side it was on.  % week 6 audio
 	\item Note you can scale your $w$ (weight) vector(s) by any constant because all you care about is sign($w \cdot x$).
 		This rescales your gamma by that constant too! \hfill \\
+	\item Bias allows you to have decision boundaries that don't go through the origin.  
+		You could us any number, but 1 is used by convention. 
+	\item Go through the data point by point, not feature by feature.
+		Feature by feature would assume independence of the features (bad).  % Week 6 audio.  
+	\item If linearly separable, it will converge.  And we will know how fast it will converge.  % Week 6 audio
 \end{itemize}
 
 \subsection{Properties of Perceptron}
@@ -18,9 +28,16 @@
 \underline{Convergence}: if the training is separable, the perceptron will eventually converge. \hfill \\
 \underline{Mistake Bound}: the maximum number of mistakes (for the binary case) is related to the 
 margin or degree of separability: $mistakes \leq \frac{R^2}{\gamma^2}$. \hfill \\
+\hfill \\  \hfill \\
+
+Sort of inspired by what might happen in a human brain.
+Neurons send info.  A module sums them up \& produces a result. 
+
 
 \subsection{Problems with the Perceptron}
 \includegraphics[width=2.8in]{figures/perceptron_problems.pdf}
+Lines might not be optimal: issues with generalizibility. \hfill \\
+Leads into SVMs. \hfill \\
 
  \subsection{Linear Classifiers}
  Inputs are feature values.  \hfill \\
@@ -76,6 +93,7 @@ So \textbf{the equation w * x = 0 defines the boundary between the positive and 
 
  
  \subsection{Multiclass Decision Rule}
+ 
  If we have more than two classes: 
  \begin{itemize}
  	\item we have a weight vector for \textbf{each} class: $w_y$
@@ -85,6 +103,11 @@ So \textbf{the equation w * x = 0 defines the boundary between the positive and 
 		$y^* = \argmax_y(activation_w(x,y))$ \hfill \\
 		"win the vote" 
  \end{itemize}
+ 
+For each point, look at all 3 classes and see which is farthest from the hyperplane.
+You can treat the dot product (+ bias) as a confidence from the hyperplane you are.  % week 6 audio. 
+\hfill \\ 
+\hfill \\
  
 \includegraphics[width=1.5in]{figures/multiclass_decision_rule_planes.pdf}
  
@@ -102,9 +125,11 @@ So \textbf{the equation w * x = 0 defines the boundary between the positive and 
 					instead:  $y= \argmax_y w_y \cdot x^i$ \hfill \\
 				\item if correct (i.e. $y = y^i$), don't change weights.
 				\item if it was wrong, update two vectors: \hfill \\
+					$w_{y^i} = w_{y^i} + x^i$ \hfill \\
+					If class 2 was the right label, add $x_i$ to $w_2$. \hfill \\
+					Also want to push down the wrong classification:  \hfill \\
+					(Didn't have to push one down for binary because adding to one pushed the other. )
 					$w_y = w_y -x^i$ \hfill \\
-					$w_{y^i} = w_{y^i} -x^i$ \hfill \\
-					??? Add or subtract from the one that gave you the argmax? ???
 			\end{itemize}
 		\end{itemize}
  \end{itemize}
@@ -135,8 +160,17 @@ For full inductive proof, see slides.
 Strategy: let $w^k$ be the weights after the k-th update (mistake).  
 Then $k^2 \gamma^2 \leq ||w^k||_2^2 \leq k R^2$ \hfill \\
 Therefore $k \leq \frac{R^2}{\gamma^2}$.  \hfill \\
-\textbf{If there is a linear separator, the Perceptron will find it!}
-		
+\textbf{If there is a linear separator, the Perceptron will find it!} \hfill \\
+ \hfill \\
+ 
+The \# of mistakes you need to make for a perceptron to converge is bounded by a ratio of $R/\gamma^2$. \hfill \\
+ \hfill \\
+
+What if gamma is small?
+    Starting to violate linearly separability rule. 
+    Shouldn't trust perceptron under this. 
+
+
 \subsection{Logistic Regression \& Perceptron similarities}
 \underline{Logistic regression}:  \hfill \\
 In vector notation, y is in the set $\{ 0, 1\}$. \hfill \\

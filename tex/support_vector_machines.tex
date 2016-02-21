@@ -1,7 +1,15 @@
-\section{Support Vector Machines}
+\section{Large-Margin Classifiers \& Support Vector Machines}
 \smallskip \hrule height 2pt \smallskip
 
+
 Vocab: 
+\begin{itemize}
+	\item \textbf{Large margin classifier}:
+	\item \textbf{Support Vector}:
+	\item \textbf{Support Vector Machine}:
+\end{itemize}
+
+Notation:
 \begin{itemize}
 	\item $i$ or $j$: the $i^{th}$ or $j^{th}$ data (training) point. 
 	\item $\bm{w}$: the weights of the model.  The black line is perpendicular to this vector. 
@@ -10,6 +18,7 @@ Vocab:
 	\item $\bm{w}_0$: a constant that defines a line parallel to the decision boundary and is $w_0$ units away. 
 \end{itemize}
 
+\subsection{Intro}
 Like perceptron, but maximizes the margin.  
 
 Optimizing a small weight vector: $\displaystyle min_w \: \frac{1}{2}||w||^2$ \hfill  \\  % \: gives 4/18ths of \quad space.
@@ -167,6 +176,49 @@ That's true for class $y'$ that is not class $y^j$ ($\forall y' \neq y^j$), and 
  
  So you can do multiple classes in a one against all approach *or* a multiclass SVM approach.  
  
+ \subsection{SVM info from other sources}
+ \subsubsection{http://axon.cs.byu.edu/Dan/478/misc/SVM.example.pdf}
+ The idea behind SVMs is to make use of a (nonlinear) mapping function that transforms data in input space to data
+in feature space in such a way as to render a problem linearly separable.  % http://axon.cs.byu.edu/Dan/478/misc/SVM.example.pdf
+The SVM then automatically discovers the optimal separating hyperplane (which, when mapped back into input space, can be a complex decision surface). % http://axon.cs.byu.edu/Dan/478/misc/SVM.example.pdf
+
+ \subsubsection{An Introduction to Statistical Learning}
+ \begin{itemize}
+ 	\item shown to perform well in a variety of settings, and are often considered one of the best “out of the box” classifiers.
+	\item The support vector machine is a generalization of a simple and intuitive classifier called the maximal margin classifier. 
+		Though the maximal margin classifier is elegant and simple, 
+			it cannot be applied to most data sets because it requires that the classes be separable by a linear boundary.
+	\item People often loosely refer to the maximal margin classifier, the support vector classifier, 
+			and the support vector machine as “support vector machines”. 
+	\item Although the maximal margin classifier is often successful, it can also lead to overfitting when p is large.
+	\item \textbf{support vector}: data points that “support” the maximal margin hyperplane in the sense that if these points were 				moved slightly then the maximal margin hyper- plane would move as well.   % Intro to statistical learning Ch 9.1
+	\item In many cases no separating hyperplane exists, and so there is no maximal margin classifier. 
+	\item If you cant separate perfectly, you can settle for almost separating the classes using a so-called soft margin.
+	\item Even if a separating hyperplane does exist, then there are instances in which a classifier based on a 
+			separating hyperplane might not be desirable. 
+	\item The fact that the maximal margin hyperplane is extremely sensitive to a change in a single observation 
+			suggests that it may have overfit the training data.
+	\item The support vector classifier, sometimes called a \textbf{soft margin classifier}: \hfill \\
+		Rather than seeking the largest possible margin so that every observation is not only on the correct side 
+			of the hyperplane but also on the correct side of the margin, we instead allow some observations to 
+			be on the incorrect side of the margin, or even the incorrect side of the hyperplane. 
+		(The margin is soft because it can be violated by some of the training observations.) 
+	\item An observation that lies strictly on the correct side of the margin does not affect the support vector classifier.
+		Changing the position of that observation would not change the classifier at all, 
+			provided that its position remains on the correct side of the margin. 
+	\item The \textbf{support vector machine} (SVM) is an extension of the support vector classifier that results from 
+		enlarging the feature space in a specific way, using \textbf{kernels}.
+	\item A \textbf{kernel} is a function that quantifies the similarity of two observations.
+	\item What is the advantage of using a kernel rather than simply enlarging the feature space 
+			using functions of the original features? 
+		One advantage is computational, and it amounts to the fact that using kernels, 
+			one need only compute K(xi, xi? ) for all (n choose 2) distinct pairs i, i?. 
+		This can be done without explicitly working in the enlarged feature space.
+		This is important because in many applications of SVMs, 
+			the enlarged feature space is so large that computations are intractable.
+ \end{itemize}
+ 
+
 
  
   
