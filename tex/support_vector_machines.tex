@@ -1,12 +1,56 @@
 \section{Large-Margin Classifiers \& Support Vector Machines}
 \smallskip \hrule height 2pt \smallskip
 
+\begin{itemize}
+	\item perceptron was online, this is batch.  % week 7 audio
+	\item desire for large margins led us away from perceptrons toward this.  % week 7 audio. 
+	\item There are so many lines that can separate the points. % week 7 audio
+		We want good margins so it does better \textbf{on the test set}. \hfill \\  % week 7 audio
+	\item We want to build the classifier that gives the biggest margins. \hfill \\  % week 7 audio
+	\item Find weights $w$.    % week 7 audio
+		It is a linear classifier, so form $w \cdot x$, and get sign or see what side of the line it appears.   % wk 7 audio
+	\item The dot product is projection onto the line.   ??? (use better vocab).  
+		\begin{itemize}
+			\item $y$ is the direction to go 
+			\item $w \cdot x$ is projection
+			\item $w_0$ is bias
+		\end{itemize}
+	\item label times prediction
+	\item Line vs classifier: can run perceptron to get a line,   % wk 7 audio
+			then move it around to get the high margin one. 
+		But you don't need to do this (b/c convex optimization.)
+		(HW 3 Q1 may be the by-hand version.)
+	\item % wk 7 audio
+		Need to normalize the weights $w$. 
+		There are an infinite ways to write the same line.
+		As you increase the magnitude of the weights, the dot product goes up. 
+		You can always increase w and get a better objective function.
+		\textbf{so you need to prevent the optimizer from getting an easy way out.}
+		Maximizing gamma (minimizing $||w||_2$) takes care of this. 
+	\item maximizing the margin is minimizing the norm2 of the weight vector subject to the constraint that we don't like to make mistakes.  % wk 7 audio
+	\item There are very few points that play a role in the formation of the hyperplane.
+		Those points are called support vectors.
+		The points far from the line play no role.  % wk 7 audio.\
+	\item with SVM, if you assume linearly seperable, you come up w/ line that maximizes the margin.   % wk 7 audio 
+	\item Can think of SVMS of minimizing loss + regularization.   % wk 7 audio
+		No closed form solution but convex, concave, can solve w/ quadratic programming.  
+		Standard solvers. 
+	\item Two ways of dealing with nonlinearity: soft margin and kernels
+	\item Desire for nonlinear boundary $\rightarrow$ kernel.
+\end{itemize}
+
+\subsubsection{what happens with very small w?}
+ Small $w \rightarrow$ big margin $\rightarrow$ poor performance.
+
 
 Vocab: 
 \begin{itemize}
 	\item \textbf{Large margin classifier}:
 	\item \textbf{Support Vector}:
 	\item \textbf{Support Vector Machine}:
+	\item \textbf{hard SVM}: don't want \underline{anything} inside your margin. 
+	\item \textbf{soft SVM}: softer: compute distance to hyperplane. 
+
 \end{itemize}
 
 Notation:
@@ -19,12 +63,14 @@ Notation:
 \end{itemize}
 
 \subsection{Intro}
-Like perceptron, but maximizes the margin.  
+Like perceptron, but maximizes the margin.   \hfill \\
+\hfill \\
 
 Optimizing a small weight vector: $\displaystyle min_w \: \frac{1}{2}||w||^2$ \hfill  \\  % \: gives 4/18ths of \quad space.
 	% https://www.andy-roberts.net/res/writing/latex/hspacing.pdf
-and getting points right: $\forall \mbox { points } i, y$  $w_{y^*} \cdot x^i \geq w_y \cdot x^i + 1$
-Summary:
+and getting points right: $\forall \mbox { points } i, y$  $w_{y^*} \cdot x^i \geq w_y \cdot x^i + 1$ \hfill \\
+\hfill \\
+Summary: \hfill \\
 \includegraphics[width=2.5in]{figures/svm_overview.pdf}
 
 There are many possible ways to write the same line: \hfill \\
@@ -33,6 +79,11 @@ $2\bm{w} \cdot \bm{x} + 2w_0 = 0$, $1000\bm{w} \cdot \bm{x} + 1000w_0 = 0$, $\do
 Any constant scaling has the same intersection with the z = 0 plane, so you get the same dividing line. \hfill \\
 \textbf{This is why we \underline{don't} want} max$_{\gamma, w, w_0}$. \hfill \\  \hfill \\
 
+Want a $w$ so that when you multiply by $x^j$, the sign is similar to $y^j$ but also gamma away.
+Nonzero gamma $\rightarrow$ margin.  
+If you used $0$ instead of $\gamma$, you would basically just be doing the perceptron.
+
+\hfill \\   \hfill \\
 %Recall that the distance from the the decision boundary to a point is given by $\gamma$
 %\includegraphics[width=2.5in]{figures/svm_dist_to_plane.pdf}
 
@@ -72,6 +123,26 @@ Now we can explain why minimizing the norm of the weights leads to the largest m
 \end{itemize}
 
 \includegraphics[width=2.7in]{figures/max_margin_using_canonical_hyperplanes.pdf}
+ 
+The bottom line under the arrow keeps the $w$ values from getting too small.   % wk 7 audio
+\hfill \\
+The 1/2 is just because we will take the derivative.  % wk 7 audio
+
+Previously we were just trying to maximizing margin.  
+That was equal to minimizing the norm of $w$. 
+Then we had a $\geq \gamma$ but now we have $\geq 1$. 
+ Are we still maximizing the margin?  
+ Yes; we showed minimizing the norm of $w$ leads to the max margin.
+ \textbf{Part is pushing for bigger margin, part is keeping points from being inside the margin.}
+ 
+The only points that have nonzero weights are the ones that are very close to the margin. \hfill \\
+The line only changes if you remove points close to the line. \hfill \\
+\hfill \\
+
+There are few points in the training data that are crucial for the line placement. 
+Those points are called support vectors
+The rest of the points would not play a role. 
+We call them support vectors b/c those are the points that can support the decision boundary. 
 
 \subsection{SVM recipe}
 We want to minimize the norm subject to getting the predictions right:  \hfill \\
@@ -83,19 +154,60 @@ All the points that aren't on the red line are non-support vectors. \hfill \\
  \hfill \\
  If your data is not linearly separable, you can add nonlinear features.
  These are called Kernels, and will be discussed later. 
+ \hfill \\ \hfill \\
+ 
+ We were minimizing the $norm_2$ of $w$ subject to constraint that $y_i (w \cdot x) > 1$
+\hfill\\ \hfill \\
  
  \subsection{Balancing \# of mistakes and $||w||_2^2$}
- If your data isn't linearly separable, then you might need to allow your $||w||_2$ to be a little bigger and make a few mistakes. 
-One option: 
- $\displaystyle  \min_{w, w_0} \frac{1}{2} ||w||_2^2 + M$ (M = \# of mistakes)  \hfill \\
- so that $\forall j . y^j(w \cdot x^j + w_0) \geq 1$
+We want to soften the constraint to allow for occasional mistakes.
+This doesn't happen by changing the 1 to 1/2.  
+Reduce the number of points that have to be good. 
+Introduce a new variable that says how wrong you are.  \hfill \\
+\hfill \\
  
- \subsubsection{Hinge Loss}
+ If your data isn't linearly separable, then you might need to allow your $||w||_2$ to be a little bigger and make a few mistakes. 
+One option (not what we end up doing): 
+ $\displaystyle  \min_{w, w_0} \frac{1}{2} ||w||_2^2 + M$ (M = \# of mistakes)  \hfill \\
+ so that $\forall j . y^j(w \cdot x^j + w_0) \geq 1$ \hfill \\
+  
+ \subsection{Hinge Loss}
+\textbf{Zero loss for things you get correct, then penalty grows linearly if you make a mistake.}
+\hfill \\  \hfill \\
+
+Want $1 - \xi = 0$ for when we are right. 
+ Use the margin: $\xi$ is the perpendicular distance from point to hyperplane.
+ Now our problem looks like: \hfill \\
+ $\min ||w||_2^2$ subject to constraint $y_i(w \cdot x_i) > 1 - \xi$
+ But we need to adjust it so we don't get a trivial solution.
+ We need to adjust $\xi$. 
+ \hfill \\  \hfill \\ 
+ 
  One way to balance the number of mistakes and how big $w$ is:  
   $\displaystyle  \min_{w, w_0} \frac{1}{2} ||w||_2^2 + C \sum_j \xi^j$ \hfill \\
  so that $\forall j . y^j(w \cdot x^j + w_0) \geq 1 - \xi^j$ \hfill \\
  C = strength of penalty. \hfill \\
  $\xi$ is size of error for each error.  If the point is classified correctly, $\xi$ is zero.   \hfill \\
+ \hfill \\
+ This is \textbf{"soft margin"} SVM.
+\hfill \\   \hfill \\
+ 
+ We have a sum because we want to have small $\xi$  
+Want both of them to be small. 
+We want most of $\xi$ values to be zero. 
+At same time we also want norm of $w$ to be small.  \hfill \\
+\hfill \\
+ 
+ Note: we don't want to sum over $\xi$ squared.
+ We don't want extra big penalty if one is way off.
+ We can use scaling to help. 
+ \hfill \\ \hfill \\
+ 
+That point on the hinge is sharp.  Can replace it with \_\_\_\_ to make it softer. 
+If you make no mistakes, then you get all zeros.
+That means your data is linearly separable.  \hfill \\   \hfill \\
+
+ 
  When we want the dot product \& shift $\geq 1 - \xi^j$, the 1 is for the green-line margin, and you are wrong by $\xi$  amount. \hfill \\
  \includegraphics[width=1.5in]{figures/hinge_loss_xis.pdf}
  \hfill \\
@@ -105,6 +217,12 @@ One option:
 	\item $C = 0 \rightarrow$ fat margins over accuracy. 
 \end{itemize}
 Use your training set to train C.  \hfill \\ 
+\hfill \\
+
+If there exists a + on the wrong side, penalize the distance to the margin or hyperplane? 
+Typically use distance to the hyperplane.  Just a difference of 1. 
+\hfill \\  \hfill \\
+
 Note that if \_\_\_\_\_ $\geq 1$, you don't care if the point is classified wrong.   % had used "margin" but this doesn't make sense!
 But if \_\_\_\_\_ $ < 1$, you pay a linear penalty. % had used "margin" but this doesn't make sense! 
 \hfill \\
@@ -112,9 +230,24 @@ But if \_\_\_\_\_ $ < 1$, you pay a linear penalty. % had used "margin" but this
 \textbf{Hinge Loss:}  \hfill \\
 $\displaystyle \min_{w, w_0} \frac{1}{2} ||w||_2^2 + C \sum_{j=1}^N [1 - y^j(w \cdot x^j + w_0)]$ \hfill \\
 $1^{st}$ term is regularization, $2^{nd}$ term is hinge loss.  \hfill \\
+\hfill \\
+
+Steps:
+\begin{enumerate}
+	\item extract features
+	\item sweep parameters w/ k-fold validation. 
+	\item solve SVM
+\end{enumerate}
+\hfill \\
+
 Solve by differentiating and set equal to zero.  \hfill \\
 There is no closed form solution, but quadratic program is concave.  (??)   \hfill \\
 Hinge loss is not differentiable (??), so gradient ascent is a little trickier.  \hfill \\
+\hfill \\
+
+This won't handle super messy tangled clouds, but hard SVM said don't want \underline{anything} inside your margin. 
+Softer: compute distance to hyperplane.  \hfill \\
+\hfill \\
 
 \subsubsection{Logistic Regression to Minimize Loss}
 Logistic regression assumes $P(Y=1 | X=x) = \frac{exp(f(x))}{1 + exp(f(x))}$  \hfill \\
@@ -131,9 +264,25 @@ Since $-\ln(z) = \ln(1/z)$ we get to minimize this (negative):   \hfill \\
 $\displaystyle  \sum_{i=1}^N \ln(1 + exp(-y^i f(x^i))) =  \sum_{i=1}^N \ln(1 + exp(-y^i [w_0 + \sum w_i x_i]))$
 
 \subsubsection{SVMs vs Regularized Logistic Regression}
+
+Logistic regression is a way to minimize loss.
+The probability of data point being class 1 is $\dots$ sigmoid function. 
+Typically that function is a linear combination. 
+We maximized the likelihood of the training data: maximize $w$.
+At the end you are minimizing the $\ln()$ below. \hfill \\
+\hfill \\
+
+SVM objective: minimizing over $w$, for margin + hinge los.
+LR: loss is not hinge any more.  Loss is exponential. 
+But we are actually doing very similar shapes.  \hfill \\
+\hfill \\
+
+
 \textbf{SVM Objective:} \hfill \\
 $\displaystyle \argmin_{\bm{w}, w_0} \frac{1}{2} ||w||_2^2 + C \sum_{j=1}^N [1 - y^j f(x^j)]_+$ \hfill \\
 where $[x]_+ = max(x , 0)$ \hfill \\
+The $[x]_+$ is made for ease of notation.
+ Just a mathematical way of writing that curve.  \hfill \\
  \hfill \\
 
 \textbf{Logistic Regression Objective:} \hfill \\
@@ -142,7 +291,19 @@ $\displaystyle  \argmin_{\bm{w}, w_0} \lambda ||w||_2^2 + \sum_{j=1}^N ln(1 + \e
  
  Note that SVM and Logistic Regression have the same $l_2$ regularization term, but different error terms. 
 
- \includegraphics[width=2.5in]{figures/LR_svm_step_losses.pdf}
+ \includegraphics[width=2.5in]{figures/LR_svm_step_losses.pdf} \hfill \\
+ The red curve is true decision boundary.
+ Green is hinge loss
+ Blue is soft version. 
+ So the 2 are optimizing similar things.  
+ Trying to approximate the step function.  \hfill \\
+ \hfill \\
+ 
+LR starts penalizing you a bit when you get close to the decision boundary.
+But once you hit the margin, SVM penalizes more.  
+Then they flip back again after the lines extend past what's drawn on the left. 
+SVM has hinge, LR has exponential or logistic function.   \hfill \\
+\hfill \\
  
  \subsection{Multi-class SVMs}
  To do 3 classes, you need to learn 3 classifiers. \hfill \\
@@ -175,6 +336,41 @@ That's true for class $y'$ that is not class $y^j$ ($\forall y' \neq y^j$), and 
  \hfill \\
  
  So you can do multiple classes in a one against all approach *or* a multiclass SVM approach.  
+ 
+ \subsubsection{Audio from week 7:}
+ How can we change our SVM formulation to account for multiple classes? 
+    What do you do to your $y_i(w \cdot x) \geq 1 - \xi_i$?
+    Want $\hat{y_i}$. 
+    If we get right w then all the blues should be on the left.  
+    so $w_{blue} x_{blue} > w_{any other x_i}$.  
+        For this green point, want the blue one to be responsible for the classification. 
+        Want the $w \cdot x$ for the right classifier to be better than any other by a margin of 1.  
+\hfill \\   \hfill \\
+
+How is different than 1 vs 3 or 1 vs all? 
+    In 1 vs all, making independent predictions for categories. 
+    Here we are simultaneously learning them all at the same time. 
+    Training 3 $w$s at same time, together. 
+    For blue sample, $w$ of blue times feature of that sample should be bigger than 
+        "1 + the margin"  (??). 
+    Why is it + 1? 
+        Margin.  Want all other points to be at least one away. 
+\hfill \\ \hfill \\
+
+How many $\xi$ values for $n$ data point? 
+    for binary SVM, have $n$. \# of samples.
+    For multi-class, $n$ times number of classifiers that we are training
+        Each classifier has its own $\xi$.  
+        We could sum it up and consider 1 if we want.  Both are options.
+\hfill \\ 
+
+\textbf{We can do multi-class with a soft margin as well}
+Don't want any of the non-blue classifiers to claim it is $w$. 
+    Pushing the red, green lines away from blue points. 
+    Want $w$ to not like any of the blues.  
+    At least not more than the blues by a margin of 1. 
+\hfill \\
+
  
  \subsection{SVM info from other sources}
  \subsubsection{http://axon.cs.byu.edu/Dan/478/misc/SVM.example.pdf}
