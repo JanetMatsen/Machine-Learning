@@ -191,12 +191,23 @@ The points:
 
 \subsubsection{Common Kernels}
 
-\includegraphics[width=2.0in]{figures/common_kernels.pdf}
+\includegraphics[width=2.0in]{figures/common_kernels.pdf} \hfill \\
+How do we pick the kernel? 
+You will get a poor result if you pick the wrong Kernel. 
+There is no theory that tells you which kernel to use, so try a few and see which works bets.  \hfill \\
+
+For our class:
+\begin{itemize}
+	\item try the polynomial of up to degree d.
+    	\item Gaussian is probably the most common.
+    	\item Sigmoid pushes one side down and the other side up.
+\end{itemize}
 
 \subsubsection{Kernels: Overfitting}
 
 With Kernels we have a huge feature space, so over-fitting can happen. \hfill \\
 It turns out, however, that it can be robust to overfitting. \hfill \\
+People have spent a lot of time figuring out regularization for different Kernel methods. \hfill \\
 Can do things like limiting the number of updates the Perceptron does. \hfill \\
 SVMs have have a clearer story for avoiding overfitting.  \hfill \\
 
@@ -206,6 +217,7 @@ You can also control by:
 \begin{itemize}
 	\item Choosing a better Kernel
 	\item Varying parameters of the Kernel, such as the width of Gaussian.
+	\item  limit dimensionality, add regularization terms (e.g. L1, L2)
 \end{itemize}
 
 \subsubsection{Kernels in Logistic Regression}
@@ -224,5 +236,50 @@ That leads to
 We can derive the gradient descent rule on $\alpha^j$, $w_0$.  ???  \hfill \\
 
 Similar tricks for all linear models: SVMs, etc. 
+
+\subsubsection{Kernels: overfitting \& number of parameters}
+Most of the time Kernels are better behaved for over-fitting (? than \_\_\_).  But they are more expensive. 
+Why? 
+For the perceptron, we optimize $\bm{w}$.  Each time, we update $\bm{w}$.  
+        The dimensionality of $\bm{w}$ is $d$ or $d+1$, depending on how you consider it. 
+    With kernel we are optimizing $\bm{a}$. 
+        Dimensionality of $\bm{a}$ is way bigger than $d$, the dimensionality of the data. 
+    We are optimizing for way more dimensions.  \hfill \\
+    
+We are explaining points based on other points in the data set
+How similar is a new point to x1, x2, xn. 
+That's why we are worried about how many summations/iterations you will do. 
+
+\subsubsection{Kernels for SVM = not easy}.
+For SVM using the kernel isn't as easy to apply.  In Logistic regression it is easy to optimize. 
+    SVM requires you to write stuff down on paper. 
+    
+\subsection{Kernel Summary}
+Summary: 
+\begin{itemize}
+    \item Expand the data to a higher dimension
+    \item might be expensive
+    \item arrive at kernel trick: approximates dot prod on higher dim space by forming dot prod in original space
+    \item we derived polynomial kernels.
+\end{itemize}
+ 
+Question: When I see a new instance in Kernelized perceptron, do I need to add it to my matrix?   \hfill \\
+Anser: no.  If you do the matrix, you compute it all in the beginning.   \hfill \\
+Note: for homework we did it on-line.  \hfill \\
+
+Method:
+\begin{itemize}
+        \item Separate training and test data.  
+        \item During training, give n data points all beforehand.  Allows you to form matrix. 
+        \item Train to get a values and kernel matrix. 
+        \item Then done training.  
+        \item Go to testing phase.  Give new instance and ask to classify.
+        \item Don't need to add new instance to kernel matrix.  
+        \item Compute similarity to all of the points you have seen. 
+\end{itemize}
+
+\textbf{You do need to store the points you got right.}
+Good to stick to sparse \_\_\_ for a . 
+
 
 
