@@ -48,11 +48,12 @@ Naive Bayes, logistic regression, perceptron, decision stumps, shallow decision 
 These learners have low variance; they don't usually overfit. 
 
 But simple (a.k.a. weak) learners are also bad: \hfill \\ 
-They have high bias, so you can't solve hard learning problems. \hfill \\ 
+They have high bias (high error), so you can't solve hard learning problems. \hfill \\ 
 
 The solution: Boosting. 
 
 \subsection{Boosting}
+Boosting is ensemble method. \hfill \\
 \underline{The idea}: given a weak learner, run it multiple times on (reweighted) training data, 
 	then let the learned classifiers vote.  \hfill \\
 	
@@ -68,24 +69,122 @@ This is both useful in a practical sense and theoretically interesting.
 Can use boosting with any kind of classifier.  %https://www.youtube.com/watch?v=UHBmv7qCey4
 
 \subsection{Bagging}
-Bagging takes a bunch of low bias, high variance functions.
-By averaging them, we can reduce the variance without significantly increasing the bias. 
+\textbf{Bagging allows encoding a curvy decision boundary} with a bunch of weak classifiers. \hfill \\
+ \hfill \\
 
-\subsubsection{Learning from weighted data}
+By averaging a bunch of low bias, high variance functions, we can reduce the variance without significantly increasing the bias. \hfill \\
+
+Making a strong classifier out of a set of weak classifiers. \hfill \\
+\hfill \\
+
+We should always avoid making hard decisions early.  % week 8 audo. 
+So don't put a lot of trust in classifiers early on in bagging. 
+If we did, the result might not generalize well.  \hfill \\
+
+Instead, pay more attention to the ones you got wrong and less attention to the ones we got right.  % week 8 audio
+
+We want instance based weighting, not classifier based weighting.  % week 8 audio
+
+We want to have weights for each instance. \hfill \\  
+\underline{Protocol:}  % week 8 audio
+\begin{itemize}
+	\item Start with uniform weights.  Each value is equally important. 
+	\item Train classifier 1.  After this, instances are not equally important. 
+	\item The points classifier 1 got correctly are now considered less important. 
+	\item We want classifier 2 to be more worried about the ones that we got wrong. 
+\end{itemize}
+
+\subsubsection{Example}
+\includegraphics[width=2.5in]{figures/bagging_example.pdf}  \hfill \\
+After making 300 classifiers, we can get a step-like decision boundary.  
+Stopping at 100 would have been better; it is not over-fit (not shown).  \hfill \\
+
+The blue, green, yellow, and red lines:   % I e-mailed the forum to figure this out. 
+\begin{itemize}
+	\item blue = training error = 
+	\item green = test error = 
+	\item yellow = hypothesis error = "Last classifier we added was 38\% wrong. " 
+		for time = 100 when Hypothesis error said 0.38
+	\item red = theoretical bound = 
+\end{itemize}
+
+\subsubsection{Learning from weighted data}  
 Consider a weighted data set: \hfill \\
 \begin{itemize}
-	\item $D(i)$ is the weight of the $i^{th}$ training example $(\bm{x}^i, \bm{y}^i)$
+	\item $D(i)$ is the weight of the $i^{th}$ training example/point (not classifier!). 
+		It gets bigger each time point $i$ is predicted incorrectly.  
+		It doesn't get smaller, but you normalize (see below). 
+		\hfill \\
+		Point = $(\bm{x}^i, \bm{y}^i)$
 	\item interpretations:
 		\begin{itemize}
-			\item $i^{th}$ training example counts as if it occurred $D(i)$ times
-			\item if I were to "resample" data, I would get more samples of "heavier" data points. 
+			\item the $i^{th}$ training example counts as if it occurred $D(i)$ times
+			\item these extra counts mean that if we were to "resample" data, 
+				we would get more samples of "heavier" data points. 
 		\end{itemize}
 	\item Now we always do weighted calculations:
 		\begin{itemize}
 			\item e.g. MLE for Naive Bayes
 			\item redefine Count(Y=y) to be a weighted count: \hfill \\
 				$\displaystyle Count(Y=y) = \sum_{j=1}^n D(j) \delta (Y^j = y)$
+			\item ?? Is this counting the number of points we have right?? No.. what is it counting? 
+			\item if point $j$ has been wrong many times before, 
+					it becomes more important, as reflected by $D(j)$ being large. 
 			\item setting $D(j) = 1$ (or any constant value!) for all $j$ recreates the unweighted case. 
 		\end{itemize}
 \end{itemize}
 
+
+Note, we can use decision stumps for boosting.  Can also use logistic regression, but it isn't as easy to show as our clas stump example.  \hfill \\
+\hfill \\
+
+That's just about weighing the samples.  How do we weight the classifiers? 
+We want to weight across \underline{all} data points. 
+Use $\alpha$ to allow classifiers to have different votes. 
+
+\subsubsection{Algorithm: Binary case}
+\underline{Given}: points $(x^1, y^1), \dots, x^m, y^m$.  \hfill \\
+For this case, $x^i \in \mathbb{R}$, and binary labels: $y^i \in \{-1, +1\}$ \hfill \\
+\underline{Initialize}: $D_1(i) = 1/m$ for $i=1, \dot, m$.  \hfill \\
+For $t = 1, \dots, T:$
+\begin{itemize}
+	\item Train base classifier $h_t(x)$ using $D_t$
+	\item Chose the weight of importance for this classifier, $\alpha_t$. \hfill \\
+		Note that this comes after training the classifier.  \hfill \\
+		There are many possibilities for choosing $\alpha$, which are discussed later.  \hfill \\
+	\item Update, for $i= 1 \dots m$:  \hfill \\
+		$D_{t+1}(i) \propto D_t(i) exp(-\alpha_t y^i h_t(x^i))$ \hfill \\
+				with normalization constant $\displaystyle \sum_{i=1}^M D_t(i) \exp(-\alpha_t y^i h_t(x^i))$ 
+		\begin{itemize}
+			\item The $D$ is getting reweighted for the next round.  \hfill \\
+			What's happening inside: \hfill \\
+			If $y^i h_t(x^i) > 0$, $h_i$ was correct.  \hfill \\
+			But if $y^i h_t(x^i) < 0$, $h_i$ was wrong.  \hfill \\
+			You multiply by $\alpha_t$, which can flip the sign inside the $\exp()$. \hfill \\
+			If $h_i$ is correct and $\alpha > 0$, then $D_{t+1}(i) < D_t(i)$.  \hfill \\
+			But if $h_i$ is wrong and $\alpha > 0$, then $D_{t+1}(i) > D_t(i)$.  \hfill \\
+		\end{itemize}
+	\item Output a final classifier: $\displaystyle h = sign \left( \sum_{i=1}^T \alpha_t h_t(x) \right)$ \hfill \\
+		This is a linear sum of "base" (weak) classifier outputs. \hfill \\
+		Note that $D$ is no longer in the picture. 		
+\end{itemize}
+
+\textbf{How to chose $\alpha$}: \hfill \\
+First calculate $\displaystyle  \epsilon_t = \sum_{i=1}^m D_t(i) \delta(h_t(x^i \neq y^i)))$ \hfill \\
+This is the error of $h_t$, weighted by $D_t$
+Then use $\displaystyle  \alpha_t = \frac{1}{2} \ln \left( \frac{1 - \epsilon_t}{\epsilon_t} \right)$  \hfill \\
+This transforms alpha according to:  \hfill \\
+\includegraphics[width=1.2in]{figures/alpha_from_epsilon.pdf}
+\begin{itemize}
+	\item no errors:  $\epsilon_t = 0 \rightarrow \alpha_t = \infty$
+	\item all errors:  $\epsilon_t = 1 \rightarrow \alpha_t = -\infty$
+	\item random:  $\epsilon_t = 0.5 \rightarrow \alpha_t = 0$
+\end{itemize}
+truncate at 2 or 3.  Don't want to allow weight = infinity. \hfill \\  % week 9 audio
+Think of this like NB with weighting. \hfill \\  % week 8 audio.
+
+If you get something right a bunch of times, the weight should converge to zero.  % week 8 audio
+\hfill \\
+
+We want to run this loop until it converges.  
+But if we run it too long, it will overfit. 
