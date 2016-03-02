@@ -168,11 +168,12 @@ For $t = 1, \dots, T:$
 		This is a linear sum of "base" (weak) classifier outputs. \hfill \\
 		Note that $D$ is no longer in the picture. 		
 \end{itemize}
+If you had two classifiers, your result would be $\alpha_1 h_1 + \alpha_2 h_2$
 
 \textbf{How to chose $\alpha$}: \hfill \\
 First calculate $\displaystyle  \epsilon_t = \sum_{i=1}^m D_t(i) \delta(h_t(x^i \neq y^i)))$ \hfill \\
-This is the error of $h_t$, weighted by $D_t$
-Then use $\displaystyle  \alpha_t = \frac{1}{2} \ln \left( \frac{1 - \epsilon_t}{\epsilon_t} \right)$  \hfill \\
+This is the error of $h_t$, weighted by $D_t$ \hfill \\
+Then use $\displaystyle  \alpha_t = \frac{1}{2} \ln \left( \frac{1 - \epsilon_t}{\epsilon_t} \right)$  (derived below) \hfill \\
 This transforms alpha according to:  \hfill \\
 \includegraphics[width=1.2in]{figures/alpha_from_epsilon.pdf}
 \begin{itemize}
@@ -180,11 +181,65 @@ This transforms alpha according to:  \hfill \\
 	\item all errors:  $\epsilon_t = 1 \rightarrow \alpha_t = -\infty$
 	\item random:  $\epsilon_t = 0.5 \rightarrow \alpha_t = 0$
 \end{itemize}
-truncate at 2 or 3.  Don't want to allow weight = infinity. \hfill \\  % week 9 audio
+Truncate at 2 or 3.  Don't want to allow weight = infinity. \hfill \\  % week 9 audio
 Think of this like NB with weighting. \hfill \\  % week 8 audio.
+\underline{Why would we want/have negative weights on classifiers?} \hfill \\
+A classifier that does worse than chance is backwards. 
+If it is worse than chance, flip the sign then use it. 
+A classifier that is wrong 90\% of the time is a good classifier.   
+A truly random classifier does not provide information.  Thow those away.
 
+\hfill \\
 If you get something right a bunch of times, the weight should converge to zero.  % week 8 audio
 \hfill \\
 
 We want to run this loop until it converges.  
 But if we run it too long, it will overfit. 
+
+\subsubsection{How to chose $\alpha_t$ for hypothesis $h_t$?}
+It would be cool to find the $\alpha_t$ that works best for that classifier, take derivative with respect to $\alpha_t$, and find an $\alpha$ that minimizes error. \hfill \\
+We can't optimize the training set error, but we can minimize a bound on it. \hfill \\
+$\displaystyle  \sum_{i=1}^m \delta(H(x^i) \neq y^i) \leq \sum_{i=1}^m D_t(i) \exp(-y^i f(x^i))$ \hfill \\
+where $\displaystyle f(x) = \sum_t \alpha_t h_t(x)$; $H(x) = sign(f(x))$ \hfill \\
+\includegraphics[width=2.5in]{figures/chosing_alpha_step_func.pdf}
+ 
+We know the training set error (\# of instances wrong) it is bounded by the sum on the right.
+Why?  The left side of the equality is the left piece of the step function.
+The exponential function of label*prediction has the expo curve.
+Note that \textbf{the exponential curve is always above the step function}.
+So we can use expo as the upper bound. 
+This is kind of like logistic regression: same form.
+
+% --------
+\subsubsection{You can choose $\alpha_t$ to minimize the error bound.}
+Note that each classifier is independent of alpha.  
+Each classifier is already a classifier by itself. 
+We want to train the weighted combinations of classifiers.  
+Note we are not directly using the error.  
+We are using a function that maps the error to a \# we can use. 
+That's the role of the alpha vs epsilon curve.  
+We liked its properties. 
+There are two parameters in the $\exp()$:  $h$ and $\alpha.$
+You can optimize for h and alpha together.
+We have a way to make the classifier sand learn the weights at the same time.
+We might still learn the classifiers first. 
+For those of you who care about joint optimization, you can flip between optimizing the two. 
+
+\includegraphics[width=2.7in]{figures/chosing_alpha--telescoping_sums.pdf}
+
+\includegraphics[width=2.7in]{figures/chosing_alpha--telescoping_sums2.pdf}
+
+Note that our $D$ values are not going up by more than 1 each time, like the intro to the concept showed.
+There is an exponential term that generally shrinks the sum of the $D$ values to 1 (at least in the class example).  \hfill \\
+\hfill \\
+
+After the third iteration for our class example:
+\includegraphics[width=3.4in]{figures/boosting_example_3rd_iteration.pdf} \hfill \\
+The $\epsilon$ values are dependent on the previous iteration's $D$ values, 
+	but the current iterations $h$ classifier. \hfill \\
+Once you find your new $\epsilon$ from your old $D$s and new $h$, 
+	you can find $\alpha$ and thus your new $D$s for the next round.   \hfill \\
+?? Does your previous classifier know anything about your other classifiers ??    \hfill \\
+?? Should we think of the fact that it was trained using $D$s from previous classifiers as knowledge about other classifiers ??   \hfill \\
+?? Is it typical to have your alpha weights grow ??  Can I explain what is driving this ?? 
+\hfill \\
