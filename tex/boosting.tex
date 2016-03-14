@@ -1,4 +1,5 @@
 \section{Ensemble Methods}
+
 \smallskip \hrule height 2pt \smallskip
 
 Vocab
@@ -20,6 +21,29 @@ The output class is a weighted vote of each classifier.
 This is better than breaking up the space into a bunch of sub-spaces and making single classifiers for each.  
 If you had single classifiers for sub-spaces, you would be losing information about the surroundings.
 It is better to have all classifiers cover the whole space, but let them vote. 
+
+\subsection{Bagging vs Boosting}
+\textbf{Bagging:} % http://stats.stackexchange.com/questions/18891/bagging-boosting-and-stacking-in-machine-learning
+\begin{itemize}
+	\item parallel ensemble: each model is built independently
+	\item aim to decrease variance, not bias
+	\item suitable for high variance low bias models (complex models)
+	\item \textbf{samples are drawn with replacement}
+	\item each model in the ensemble vote with equal weight % https://en.wikipedia.org/wiki/Ensemble_learning
+	\item an example of a tree based method is random forest, which develop fully grown trees (note that RF modifies the grown procedure to reduce the correlation between trees)
+\end{itemize}
+
+\textbf{Boosting:}  % http://stats.stackexchange.com/questions/18891/bagging-boosting-and-stacking-in-machine-learning
+\begin{itemize}
+	%\item sequential ensemble: try to add new models that do well where previous models lack
+	\item \textbf{incrementally building an ensemble by training each new model instance to emphasize the training instances that previous models mis-classified.} 
+	\item aim to decrease bias, not variance
+	\item suitable for low variance high bias models
+	\item an example of a tree based method is gradient boosting
+	\item In some cases, boosting has been shown to yield better accuracy than bagging, but it also tends to be more likely to over-fit the training data. % https://en.wikipedia.org/wiki/Ensemble_learning
+	\item AdaBoost is the most common
+\end{itemize}
+
 
 \subsection{Bagging}
 \textbf{"Bagging" = \underline{B}ootstrap \underline{AGG}regation.}
@@ -53,6 +77,27 @@ They have high bias (high error), so you can't solve hard learning problems. \hf
 The solution: Boosting. 
 
 \subsection{Boosting}
+
+\begin{itemize}
+	\item Combine	weak	classifiers	to get very strong classifier.  
+		The weak classifiers only have to be slightly better than random on the training data. 
+		You end up with a very strong classifier.  You can get zero training error. 
+	\item AdaBoost is the most common algorithm
+	\item Similar to logistic regression:
+		\begin{itemize}
+			\item both linear models.  Boosting "learns" features.  
+			\item similar loss functions
+			\item single optimization (Logistic Regression) versus incrementally improving classification (Boosting) 
+		\end{itemize}
+	\item  boosting with a weak classifier is better than using a fancy classifier. 
+		A boosted version will always do better than the vanilla one. 
+	\ 
+\end{itemize}
+
+
+An approach to calculate the output using several different models and then average the result using a weighted average approach. 
+By combining the advantages and pitfalls of these approaches by varying your weighting formula you can come up with a good predictive force for a wider range of input data, using different narrowly tuned models.  % http://stats.stackexchange.com/questions/18891/bagging-boosting-and-stacking-in-machine-learning
+
 Boosting is ensemble method. \hfill \\
 \underline{The idea}: given a weak learner, run it multiple times on (reweighted) training data, 
 	then let the learned classifiers vote.  \hfill \\
@@ -69,6 +114,10 @@ This is both useful in a practical sense and theoretically interesting.
 Can use boosting with any kind of classifier.  %https://www.youtube.com/watch?v=UHBmv7qCey4
 
 \subsection{Bagging}
+
+Stands for Bootstrap Aggregation. \hfill \\
+The way decrease the variance of your prediction by generating additional data for training from your original dataset using combinations with repetitions to produce multisets of the same cardinality/size as your original data. By increasing the size of your training set you can't improve the model predictive force, but just decrease the variance, narrowly tuning the prediction to expected outcome.  % http://stats.stackexchange.com/questions/18891/bagging-boosting-and-stacking-in-machine-learning
+
 \textbf{Bagging allows encoding a curvy decision boundary} with a bunch of weak classifiers. \hfill \\
  \hfill \\
 
@@ -101,12 +150,15 @@ Stopping at 100 would have been better; it is not over-fit (not shown).  \hfill 
 
 The blue, green, yellow, and red lines:   % I e-mailed the forum to figure this out. 
 \begin{itemize}
-	\item blue = training error = 
-	\item green = test error = 
-	\item yellow = hypothesis error = "Last classifier we added was 38\% wrong. " 
+	\item blue = training error = same as usual.  Randomly choose a subset to hold-out for testing
+	\item green = test error = same as usual.  Randomly choose a subset to hold-out for testing
+	\item yellow = hypothesis error = the error of the new weak learner generated on that step 
+			(i.e. a decision stump) \hfill \\
+		"Last classifier we added was 38\% wrong. " 
 		for time = 100 when Hypothesis error said 0.38
-	\item red = theoretical bound = 
+	\item red = theoretical bound = the bound on the training error, derived in the later slides
 \end{itemize}
+% TA: Training/test sets are selected as always: randomly choosing a subset to hold-out for testing. Hypothesis error tells you the error of the new weak learner generated on that step (i.e. a decision stump). Theoretical bound is the bound on the training error, derived in the later slides.
 
 \subsubsection{Learning from weighted data}  
 Consider a weighted data set: \hfill \\
@@ -239,7 +291,63 @@ The $\epsilon$ values are dependent on the previous iteration's $D$ values,
 	but the current iterations $h$ classifier. \hfill \\
 Once you find your new $\epsilon$ from your old $D$s and new $h$, 
 	you can find $\alpha$ and thus your new $D$s for the next round.   \hfill \\
-?? Does your previous classifier know anything about your other classifiers ??    \hfill \\
-?? Should we think of the fact that it was trained using $D$s from previous classifiers as knowledge about other classifiers ??   \hfill \\
+%?? Does your previous classifier know anything about your other classifiers ??    \hfill \\
+%?? Should we think of the fact that it was trained using $D$s from previous classifiers as knowledge about other classifiers ??   \hfill \\
 ?? Is it typical to have your alpha weights grow ??  Can I explain what is driving this ?? 
 \hfill \\
+\hfill \\
+
+\textbf{The D after normalization is a probability.}
+
+\subsubsection{Assembling weak classifiers}
+If each classifier is (at least slightly) better than random: $\epsilon_t < 0.5$: \hfill \\
+Another bound on error:
+$$ \frac{1}{m} \sum_{i=1}^m \delta (H(x^i) \neq y^i) \leq \prod_t Z_t \leq \exp \left( -2 \sum_{t=1}^T (\frac{1}{2} - \epsilon_t)^2 \right)$$
+This implies training error will reach zero exponentially fast. \hfill \\
+The error is bounded by an exponential of how far you are from random. \hfill \\
+
+Note that it isn't too hard to achieve better than random training error, especially for binary classification.   \hfill \\
+Boosting is powerful!  \hfill \\
+
+Note that test error can continue to decrease after training error goes to zero.  
+
+\includegraphics[width=2.2in]{figures/boosting_train_test_error.pdf}
+
+Also in this figure, the lack of up-tick at the right shows that boosting does not overfit. 
+
+\subsubsection{Using your classifier}
+Say you have a trained/converged classifier.
+That means you have $h$s and $\alpha$s : weak classifiers and their corresponding weights. 
+Plug in new $x$ into $H(x)$ %, which puts into $H(x)$.
+
+\textbf{How do we know when to stop? } \hfill \\
+If the training error keeps getting better we keep going.
+This could lead to over-fitting, but it turns out boosting is robust to overfitting.   \hfill \\
+(We didn't actually conclude when to stop in class.) 
+
+There was a theory (Freund \& Schapire, 1996) that suggested 
+$$ error_{true}(H) \leq error_{train}(H) + \tilde{\mathcal{O}} \left( \sqrt{\frac{Td}{m}} \right) $$
+Suggests you don't want to use complicated classifiers in your boosting.  d would get high, we could end up over-fitting. % week 9 audio
+
+$T$: number of boosting rounds.  Higher $T$ $\rightarrow$ looser bound.  \hfill \\
+$d$: VC dimension of weak learner.  Measures complexity of classifier.  \hfill \\
+$m$: number of training examples.  More data $\rightarrow$ tighter bound.  \hfill \\
+\hfill \\
+
+It turns out boosting is robust to overfitting.  The test set error decreases even after the training error reaches zero.  So this theory doesn't hold. 
+
+\subsubsection{Boosting and Logistic Regression}
+Both smooth approximations of 0/1 step loss.
+
+\includegraphics[width=2.2in]{figures/losses--boosting_and_logistic_regression.pdf}
+
+\includegraphics[width=2.7in]{figures/logistic_regression_and_boosting_summary.pdf}
+
+As noted above:
+Similar to logistic regression:
+\begin{itemize}
+	\item both linear models.  Boosting "learns" features.  
+	\item similar loss functions
+	\item single optimization (Logistic Regression) versus incrementally improving
+\end{itemize} 
+

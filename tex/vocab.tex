@@ -4,17 +4,23 @@
  \begin{itemize}
  	\item \textbf{classification} - ??? Finding a f that converts X to Y where Y are categorical.  (Not regression).  
 	\item \textbf{supervised learning} - at training time we are given a set of features with discrete class labels.  % Wk 4 audio transcription.
- 	\item \textbf{held-out data}: synonymous with validation data (?)
+ 	\item \textbf{held-out data}: 
+			the terms "held-out" and "validation" are usually synonymous  % 2/25/2015 class forum (my question)
 	\item \textbf{hypothesis space}: ?  E.g. binomial distribution for coin flip.  	
  	\item \textbf{prediction error}: measure of fit (?) 
 	\item \textbf{regularization}: a process of introducing additional information in order to solve an ill-posed problem or to prevent overfitting  % https://en.wikipedia.org/wiki/Regularization_(mathematics)
-	\item \textbf{L1} norm
+	\item \textbf {norm}.  A scalar (not vector!) measure of distance between two vectors.  % E confirmed 3/6/2016
+					You can divide by this scalar to \underline{norm}alize, but that is just one use case.
+					You can also use either norm as a regularization term. 
+	\item \textbf{L1} norm.  Just add the absolute values of the components.  % E confirmed 3/6/2016
 	\item \textbf{L2} norm.  Can be used to regularize, or to normalizing features. 
 		\begin{itemize}
+			\item Euclidean vector length.  Pythagoras style. 
 			\item You can do $l_2$ normalization for a feature vector to get a unit vector: 
 				Convert $x$ to $\hat{x}$ so that if you form $||\hat{x}||_2^2 = 1$
 				Can also do $l_1$
 		\end{itemize}
+	\item \textbf{L2} distance:  Pythagoras distance between two vectors. 
 	\item \textbf{convergence} - if you add more data and you don't get different parameters, the model has converged. 
 	\item \textbf{kernel}: some transformation of your features that improves your classification %Erick 1/30/2015
 	%\item \textbf{}
