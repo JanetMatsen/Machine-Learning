@@ -1,2 +1,11 @@
 \section{Expectation Maximization}
 \smallskip \hrule height 2pt \smallskip
+
+A clever method for maximizing marginal likelihood, where you alternate between computing an expectation and a maximization. 
+
+It is not magic: it is still optimizing a non-convex function with lots of local optima.  The computations are just easier. 
+
+\begin{itemize}
+	\item as in GMM: $$ \argmax_{\theta} \prod_i P(x^j; \theta) = \argmax \prod_j \sum_{i=1}^k P(y^j=i, x^j; \theta) $$
+
+\end{itemize}

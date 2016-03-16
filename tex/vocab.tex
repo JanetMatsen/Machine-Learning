@@ -26,6 +26,8 @@
 	%\item \textbf{}
 	\item \textbf{affine}: indicates that the subspace need not pass through the origin.  % Intro to statistical learning Ch 9.1
 	\item \textbf{support vector}: data points that “support” the maximal margin hyperplane in the sense that if these points were 				moved slightly then the maximal margin hyper- plane would move as well.   % Intro to statistical learning Ch 9.1
+	\item \textbf{marginal likelihood}: 
+	\item \textbf{marginalized out} = integrated out % https://en.wikipedia.org/wiki/Marginal_likelihood
 
  \end{itemize}
  
@@ -62,7 +64,48 @@ Note $L_1$/$L_2$ normalization versus penalty/regularization!!
 		
 		What is the order of the size of the parameters you need to do the full conditional probability?
 		For Naive Bayes it is d; \textbf{linear}.  And the full conditional would be exponential! 
-		
+
+\subsubsection{Maximum Likelihood Estimation (MLE)}
+
+\textbf{Take log, take derivative, set equal to zero.} \hfill \\
+
+Memorize. Likelihood is DATA. \hfill \\  % e-mail to self 2/1/2015 
+
+The best mu for a gaussian is the mean. 
+Maximized probability of this data being produced by the distribution. 
+The data is most likely to be generated if the mean is mu. 
+Did same for sigma.  We realized best way is to use the variance.  \hfill \\
+
+\textbf{Wikipedia:}
+
+To use the method of maximum likelihood, one first specifies the joint density function for all observations. For an independent and identically distributed sample, this joint density function is:
+
+$$  f(x_1,x_2,\ldots,x_n\mid\theta) = f(x_1\mid \theta)\times f(x_2|\theta) \times \cdots \times  f(x_n\mid \theta). $$
+  
+Now we look at this function from a different perspective by considering the observed values $x1, x2, \dots, xn$ to be fixed "parameters" of this function, whereas ? will be the function's variable and allowed to vary freely; this function will be called the likelihood:
+
+
+ $$  \mathcal{L}(\theta\,;\,x_1,\ldots,x_n) = f(x_1,x_2,\ldots,x_n\mid\theta) = \prod_{i=1}^n f(x_i\mid\theta) $$
+  
+Note that " ; " denotes a separation between the two input arguments: $\theta$ and the observations $x_1,\ldots, x_n$.
+
+In practice it is often more convenient to work with the logarithm of the likelihood function, called the log-likelihood:
+
+
+   $$ \ln\mathcal{L}(\theta\,;\,x_1,\ldots,x_n) = \sum_{i=1}^n \ln f(x_i\mid\theta) $$
+  
+or the average log-likelihood:
+
+  $$ \hat\ell = \frac1n \ln\mathcal{L} $$
+  
+The hat over $\ell$ indicates that it is akin to some estimator. Indeed, $\hat{\ell}$ estimates the expected log-likelihood of a single observation in the model.
+
+The method of maximum likelihood estimates $\theta_0$ by finding a value of $\theta$ that maximizes $\hat\ell(\theta;x)$. This method of estimation defines a maximum-likelihood estimator (MLE) of $\theta_0$:
+
+
+    $$  \{ \hat\theta_\mathrm{mle}\} \subseteq \{ \underset{\theta\in\Theta}{\operatorname{arg\,max}}\ \hat\ell(\theta\,;\,x_1,\ldots,x_n) \} $$
+
+	
 \subsubsection{MLE vs MAP}
 \begin{itemize}
 		\item both MLE and MAP are point estimates.  No estimate of uncertainty.  % https://www.youtube.com/watch?
@@ -111,8 +154,6 @@ Naive Bayes:  generative   \hfill \\
 \hfill \\
 
 One can only distinct between whether it is something, the other can say how likely. \hfill \\
-
-
 
 Two big categories of approaches for ML: \hfill \\
 \underline{Generative}:
@@ -166,7 +207,38 @@ Why does the generative p graph max out at 0.1 and the discriminative at 1?
  
  \subsection{NB, LR, Perceptron}
 \includegraphics[width=2.5in]{figures/three_views_of_classification.pdf}
- 
 
-		
+\subsection{Gradient Ascent/Descent vs Coordinate Ascent/Descent}
+ We discussed gradient descent with logistic regression. \hfill \\
+ We mentioned coordinate descent when getting ready to talk about EM.   \hfill \\
+
+\subsubsection{Gradient descent}
+For finding the local minimum. 
+\begin{itemize}
+	\item Takes steps proportional to the negative of the gradient 
+		(or of the approximate gradient) of the function at the current point. 
+	\item If instead one takes steps proportional to the positive of the gradient, 
+		one approaches a local maximum of that function; 
+		the procedure is then known as gradient ascent.
+\end{itemize}	
+
+\subsubsection{Coordinate descent}
+\begin{itemize}
+	\item A non-derivative optimization algorithm
+	\item To find a local minimum of a function, one does line search along 
+		one coordinate direction at the current point in each iteration. 
+		One uses different coordinate directions cyclically throughout the procedure.
+	\item Has problems with non-smooth functions 
+		% https://en.wikipedia.org/wiki/Coordinate_descent
+	\item Coordinate descent \textbf{does} have step size parameter. % week 10 audio
+		To prevent over-shooting, you many need to take smaller steps. 
+	\item  Does converge under two big assumptions: \hfill \\
+		(1) fixing one works.   \hfill \\
+		(2) need loss to get smaller than it was before. \hfill \\
+	\item Won't always converge to global optima.
+	\item For coordinate descent, you have to be extremely careful that each step reduces the loss function.
+		If you can't prove that you should not use coordinate descent. 
+\end{itemize}	
+
+K-means does this: alternate between holding the assignments and the centers fixed. 
 
