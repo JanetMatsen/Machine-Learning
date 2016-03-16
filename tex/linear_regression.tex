@@ -134,6 +134,16 @@ Dimensions:
 \hfill \\
 
 \subsubsection{Linear regression prediction is a linear function plus Gaussian noise}
+
+If we assume that our data y_i is drawn from a linear function with some zero-mean Gaussian noise, i.e.
+
+$$y_i = \sum_j w_j X_ij + \epsilon_i$$
+(where $\episilon_i$ is zero-mean gaussian noise drawn from Normal(0, $\sigma$)
+
+Then we can show that the MLE estimates of w_j are exactly the optimal weights obtained by minimizing the SSE: $\sum_i (y_i - w^T X_i)^2$
+
+(note that the variance $\sigma$ actually doesn't matter for the derivation, you can just assume it's some positive number).
+
 We can model as linear combination of basis functions + noise $\epsilon$.  
 It's safe to assume epsilon comes from Gaussian distribution.  \hfill \\
 

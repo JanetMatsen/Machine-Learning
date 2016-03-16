@@ -6,6 +6,13 @@ A clever method for maximizing marginal likelihood, where you alternate between 
 It is not magic: it is still optimizing a non-convex function with lots of local optima.  The computations are just easier. 
 
 \begin{itemize}
-	\item as in GMM: $$ \argmax_{\theta} \prod_i P(x^j; \theta) = \argmax \prod_j \sum_{i=1}^k P(y^j=i, x^j; \theta) $$
-
+	\item as in GMM, the objective is: 
+		$$ \argmax_{\theta} \prod_i P(x^j; \theta) = \argmax \prod_j \sum_{i=1}^k P(y^j=i, x^j; \theta) $$
+	\item \textbf{E step:} Compute the expectations to "fill in" the missing $y$ values according to the current parameters. \hfill \\
+		For all examples $j$ and values $i$ for $y$, compute: $P(y^j = i | x^j, \theta)$. 
+	\item \textbf{M step:}
+		Re-estimate the parameters with "weighted" MLE estimates:
+		Set 
+			$$\theta = \argmax_{\theta} \sum_j \sum_{i=1}^k P(y^j = i | x^j, \theta) log P(y^j = i, x^j | \theta )$$ 
+	\item this is especially useful when the E and M steps have closed form solutions. 
 \end{itemize}
