@@ -74,6 +74,11 @@ Note:  the point y with minimum squared Euclidean distance to a set of points {x
 \includegraphics[width=1.8in]{figures/k-means_gets_stuck.pdf}
 
 \subsection{Agglomerative Clustering}
+Will not converge to a global optimum. \hfill \\  % TA 3/15/2016
+Will not always find the true patterns in the data.  \hfill \\  % TA 3/15/2016
+It has to deal with the issue of local optima just like k-means (which can prevent you from finding the "true" patterns)
+
+
 First merge very similar instances. \hfill \\
 Then incrementally build larger clusters out of smaller clusters. \hfill \
 Limiting the number of pairs of pairs, we can control the number of clusters.

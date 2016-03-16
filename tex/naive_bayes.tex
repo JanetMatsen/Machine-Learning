@@ -1,6 +1,6 @@
 \section{Naive Bayes}
 \smallskip \hrule height 2pt \smallskip
-Parameters are from data stistics; probabilistic interpretation.  \hfill \\ % lec 7 end
+Parameters are from data statistics; probabilistic interpretation.  \hfill \\ % lec 7 end
 Train on Y conditioned on x. \hfill \\  % Friday wk 4 audio transcription.
 Bayes: $P(Y=X) \propto P(X|Y)P(Y)$.  
 But that is ($2^N$) parameters, and you might not be able to make a model with that many ($N$) parameters if your training data has a lot of features.
@@ -18,6 +18,8 @@ No.  We start with the joint distribution: $P(x|y)*prior$, $\dots$, take the max
 Vocabulary
 \begin{itemize}
 	\item \textbf{$h_{NB}(x)$} the function that returns the best class.  %Erick 2/4/2016
+	\item Loss function:
+	in Naive Bayes the loss function is the negative log likelihood of the data given the parameters: $- \ln(P(X, y | w))$.  % TA e-mail 3/15/2016
 \end{itemize}
 
 Advantages:

@@ -78,6 +78,12 @@ The solution: Boosting.
 
 \subsection{Boosting}
 
+\underline{TA summary:} \hfill \\
+We take a "weak" learner (e.g. a decision tree with depth 1), and learn the optimal classifier $h_1$. 
+We then reweight the data points, increasing the relative weight of the misclassified points, and learn an optimal classifier $h_2$ which is heavily biased against mislabelling the same points. 
+We repeat this process, and output a final classifier which uses a linear combination of the weak learners' predictions: $H(x) = sgn(\sum_t \alpha_t h_t(x))$. 
+Although the weak learners may have high-bias, and therefore simple decision boundaries, the "strong" classifier can be a complicated decision boundary.
+
 \begin{itemize}
 	\item Combine	weak	classifiers	to get very strong classifier.  
 		The weak classifiers only have to be slightly better than random on the training data. 

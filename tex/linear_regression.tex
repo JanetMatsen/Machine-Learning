@@ -1,6 +1,10 @@
 \section{Linear Regression}
 \smallskip \hrule height 2pt \smallskip
 
+The loss is $|| y - Xw ||^2 + \lambda || w ||^2$ \hfill \\
+(this corresponds to the sum of squared error loss + L2 regularization)\hfill \\
+\hfill \\
+
 \underline{Ordinary Least Squares} \hfill \\
 
 Notation:
@@ -134,16 +138,19 @@ Dimensions:
 \hfill \\
 
 \subsubsection{Linear regression prediction is a linear function plus Gaussian noise}
-
-If we assume that our data y_i is drawn from a linear function with some zero-mean Gaussian noise, i.e.
+%______TA e-mail 3/15________________________
+\underline{Casual explanation:} \hfill \\
+If we assume that our data $y_i$ is drawn from a linear function with some zero-mean Gaussian noise, i.e.
 
 $$y_i = \sum_j w_j X_ij + \epsilon_i$$
-(where $\episilon_i$ is zero-mean gaussian noise drawn from Normal(0, $\sigma$)
+(where $\epsilon_i$ is zero-mean gaussian noise drawn from Normal(0, $\sigma$)
 
-Then we can show that the MLE estimates of w_j are exactly the optimal weights obtained by minimizing the SSE: $\sum_i (y_i - w^T X_i)^2$
+Then we can show that the MLE estimates of $w_j$ are exactly the optimal weights obtained by minimizing the SSE: $\sum_i (y_i - w^T X_i)^2$
 
-(note that the variance $\sigma$ actually doesn't matter for the derivation, you can just assume it's some positive number).
-
+(note that the variance $\sigma$ actually doesn't matter for the derivation, you can just assume it's some positive number). \hfill \\ %%
+\hfill \\
+%______________________________
+\underline{More formal explanation:} \hfill \\
 We can model as linear combination of basis functions + noise $\epsilon$.  
 It's safe to assume epsilon comes from Gaussian distribution.  \hfill \\
 
@@ -331,20 +338,33 @@ The error over all possibilities.   Instead of sum, take expectation.
 		& \mbox{Gold Standard:} \\
 	error_{true}(\bm{w}) &= \int_x (t(\bm{x_j})-\sum_{i} w_i h_i(\bm{x_j}))^2 p(\bm{x}) d\bm{x}
 \end{align*}
+
+% TA 3/15/2016:
+$p(x)$ is assumed to be the "true" distribution of the data, which we don't actually know. 
+
 How to get $p(\bm{x})$?  Need to know the true distribution of the data (?).  
-You almost never know how to compute p(x).
+You almost never know how to compute $p(x)$.
 And, the integral is a very big sum. \hfill \\  \hfill \\
 
-Find $p(x)$ using monte-carlo integration. 
-Sample some points, estimate p(x).  
-That leads to a fair approximation.  \hfill \\  \hfill \\
+% Find $p(x)$ using monte-carlo integration. \hfill \\
+
+% TA 3/15/2016:
+To do this, you need to split your data into training and test set. 
+If we have a dataset which is randomly sampled from $p(x)$, which we assume our data is, we can estimate the true error using the average of the samples. 
+Since we train on our training set, the error might be a bad estimate of the true error (we're biased to decrease the error), so we use a separate hold-out testing set to approximate the true error in instead.
+
+Sample a set of i.i.d. points  $\{ \bm{x}_1, \dots, \bm{x}_M \}$ from $p(x)$.   \hfill \\
+Approximate the integral with the sample average:
+$$ error_{true}(\bm{w}) \approx \frac{1}{M} \sum_{j=1}^M \left( t(\bm{x}_j - \sum_i w_i h_i(\bm{x}_j) \right) $$
+That is the sampling approximation of the predicted error: \hfill \\
+That leads to a fair approximation.   \hfill \\
+
+\hfill \\  \hfill \\
 
 The true prediction error is the expectation over \textbf{future} test cases you don't have.  
 Since you don't have the x values, you go to probability. 
 Pick a point from the distribution, and calculate the \_\_\_\_\_.     \hfill \\  \hfill \\
 
-Sampling approximation of predicted error: \hfill \\
-$\displaystyle error_{true}(\bm{w}) \approx \frac{1}{M} \sum_{j=1}^M(t(\bm{x_j} - \sum_i w_i h_i(\bm{x_j}))^2$  \hfill \\
 Don't use the training data to predict true error; you've already trained to that data!  You would have too optimistic of a prediction for true error. 
 
 Prediction error is high when the model is too simple \underline{and} too complex, unlike training set error which only penalizes too simple.  \hfill \\
@@ -382,9 +402,11 @@ How to find lambdas?
 \begin{itemize}
 	\item try a bunch and find which does best on the held out data set.  
 		Can't touch test data, even w/ stick so use held-out set. 
-	\item Pick lambda that gives minimum error.
-		May not find the bottom-of-the-U shape lambda.  
-		But it is ok to be off a bit; the red U might be pretty flat at the bottoms.
+	\item Do k-fold cross validation to pick the lambda that gives minimum error. \hfill \\
+		Average over the loss curves Loss($fold_i$, $\lambda$) \hfill \\ 
+		Minimum error = lowest loss on the hold-out set (the curve should look U shaped, so you just find the bottom of the U).  \hfill \\
+		May not find the bottom-of-the-U shape lambda.    \hfill \\
+		But it is ok to be off a bit; the red U might be pretty flat at the bottoms. \hfill \\
 \end{itemize}		
 This use of the held-out data doesn't count as training.  
 Lambda is fixed each time, and we train separately. 

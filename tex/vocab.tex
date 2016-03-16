@@ -118,6 +118,22 @@ The method of maximum likelihood estimates $\theta_0$ by finding a value of $\th
 		\item in MAP, you have to chose a prior.  Sometimes not fun to pick.  % https://www.youtube.com/watch?v=kkhdIriddSI
 \end{itemize}
 
+\underline{TA e-mail} \hfill \\
+In both of these problems, we assume that we have some i.i.d. data $\{x_1, ... , x_M\}$ which was drawn from a distribution $P(x_i | \theta)$, and we want to estimate the parameters $\theta$).
+
+In the MLE scenario, we directly optimize the (log) likelihood of the data $P(X | \theta)$, to get the estimate of $\theta$ under which the data has maximum likelihood.
+
+In the MAP scenario, we also have some prior knowledge about what $\theta$ should be, e.g. $P(\theta) =$ Normal$(0, \sigma)$. We can then use Bayes' rule to get $P(\theta | X)$:
+
+$$ P(\theta | X) = P(X | \theta) P(\theta) / Z$$
+where Z is the normalizing constant
+
+That is, we want our estimate of theta to: \hfill \\
+1) Model the data well,  \hfill \\
+2) Have a high prior probability.  \hfill \\
+
+\textbf{Note that when $P(\theta)$ is constant, i.e. we don't have any prior knowledge, MAP just reduces to MLE.}
+
 \subsubsection{How Naive Bayes, MLE, and MAP fit together}  % Erick approved.
 In order to do Bayesian inference, you put your likelihood into Bayes rule.  That has nothing to do with Naive Bayes.
 If you just maximize the ML equation, that gives you MLE.
@@ -149,6 +165,24 @@ Can reduce sensitivity to zero values when multiplying probabilities.
 \end{itemize}
 
 \subsubsection{Generate vs. Discriminative}
+\textbf{Discriminative tries to learn $P(y | x)$, whereas a generative model tries to learn $P(x,y) = P(y|x)P(x).$ }   \hfill \\
+
+Since the generative model learns $P(x)$ as well as $P(y|x)$, it often requires much more data, but can do things like actually generating sampled data from scratch by drawing from $P(x)$ and then from $P(y|x)$ (hence the term 'generative' model). Given that, you could classify the algorithms above as follows:
+
+Generative: 
+\begin{itemize}
+	\item Naive Bayes (since we learn class distributions $P(y_i)$ and models $P(x_ij | y_i)$, a bit backwards from above, but we're still learning a generative model)
+\end{itemize}
+Discriminative: 
+\begin{itemize}
+	\item Decision Trees
+	\item Perceptron
+	\item SVM
+\end{itemize}
+
+Point estimation and linear regression don't really fit as well into this framework, since we're usually talking about classifiers when making this distinction. For further info you can read the discussion here: \href{http://stats.stackexchange.com/questions/12421/generative-vs-discriminative}{Stats.stackexchange}
+  \hfill \\
+
 logistic: discriminative  \hfill \\
 Naive Bayes:  generative   \hfill \\
 \hfill \\
@@ -176,13 +210,17 @@ Two big categories of approaches for ML: \hfill \\
 		The discriminative classifier is like a lazy painter.  \hfill \\  % Wed Wk 5 transcript
 		You can get decision boundary out of a generative model but it is over-kill if you only want to produce a label.  \hfill \\  % Wed Wk 5 transcript
 		 85\% of time discriminative outperforms.  B/c p(Data,Zebra) is hard to estimate.  \hfill \\  % Wed Wk 5 transcript
-		 
-		 
+		 		 
 \includegraphics[width=2.5in]{figures/zebra_painting.pdf}
+
 Why does the generative p graph max out at 0.1 and the discriminative at 1?   
     Discriminating against zebra or not zebra.  Has to sum to 1.  
     The discriminative doesn't have to sum to 1.  Many other things have to sum with it to sum to 1. 
     
+\underline{TA review:} \hfill \\
+In discriminative models we just want to discriminate between classes given the data: learning $P(y_i | X_i)$. 
+In generative models we are trying to learn the joint distribution $P(y_i, X_i) = P(y_i) P(X_i | y_i)$, which we can then use to determine $P(y_i | X_i)$ by Bayes rule. 
+Although this requires more data since we're learning $P(X_i | y_i)$, these models can be much more interpretable than discriminative models.
  
  \subsection{Linear Classifiers}
  Inputs are feature values.  \hfill \\

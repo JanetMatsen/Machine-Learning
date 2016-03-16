@@ -3,6 +3,7 @@
 
 \begin{itemize}
 	\item Another probabilistic approach to classification (categorical predictions).  \hfill \\
+	\item directly optimizing the conditional log likelihood % TA 3/15/2016
 	\item Discriminative: learn $P(Y|X)$ directly then discriminate between classes.    % Week 5 audio. 
 		We solved similar problems using Bayes before (a generative approach).  
 	But if we don't want to bother with modeling all those joint or conditional probabilities, we can do this discriminative approach instead. \hfill \\  %Wed 2/3 audio transcription.
@@ -91,7 +92,11 @@ $0 <w_0 + \sum_i w_i X_i$   \hfill \\
 \textbf{The decision boundary is a line (or hyperplane), hence we have a linear classifier!} \hfill \\  \hfill \\
 
 For $ \displaystyle P(Y=0 | \bm{X,w}) = \frac{1}{1 + exp(w_o + w_1 x_1)}$:  \hfill \\
+
+\includegraphics[width=3.4in]{figures/decision_boundary_examples.pdf}   \hfill \\
+
 \includegraphics[width=2in]{figures/decision_boundary_example.pdf}   \hfill \\
+
 (See notes for more $w_0, w_1$ values plotted.)  \hfill \\
 In these plots, Y is the probability that the class is 1.    \hfill \\
 The red curve is the sigmoid.  The blue line is the decision boundary.  \hfill \\
@@ -104,7 +109,14 @@ The red sigmoid defines a probability distribution over $Y$ in \{0,1\} for every
 \hfill \\
 The decision boundary leads to $P(Y=0|X, w) = 0.5$ when you are at the $y=0$ point on the line.   \hfill \\
 (E/J words:  when the blue line crosses the x axis, that's when the sigmoid curve is above 1/2, which corresponds to classifying it as a no/0.)  \hfill \\
+\hfill \\
+
+% Forum 3/15/2016:
+If $w_0 = 0$, $P(Y=0|X, w) = 0.5$ when at the $y=0$ point on the line: the exponent just becomes 0 and the whole equation evaluates to 0.5. 
+If $w_0 \neq 0 $, this statement is no longer true.
+And similar argument for the 2-d case.
 The slope of the line defines how quickly the probabilities go to 0 or 1 around the decision boundary. 
+\hfill \\
 \hfill \\
 
 2D inputs: \hfill \\
@@ -114,7 +126,11 @@ For $ \displaystyle P(Y=0 | \bm{X,w}) = \frac{1}{1 + exp(w_o + w_1 x_1 + w_2 x_2
 $P(Y=0 | X, w)$ decreases as $w_0 + \sum_i w_i x_i$ increases. 
 Again, if you set the stuff inside the exponential to zero, you get the decision boundary hyperplane.
 
-\subsubsection{Finding the w coefficients}
+\subsubsection{Finding the w coefficients: Loss Function}
+\underline{Simple Intro}: \hfill \\  % TA e-mail 3/15/2016
+You can use the chain rule in the opposite direction to decompose the loss function into the log likelihood of $X$ as well as the conditional log likelihood of the labels $y$ given $X$.
+
+\underline{Class Version}: \hfill \\
 Generative (Naive Bayes) loss function: 
 Now $j$ is a data point with observations indexed over $i$.
 
